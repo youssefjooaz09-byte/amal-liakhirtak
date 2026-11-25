@@ -32,3 +32,12 @@
 - manifest.webmanifest (Arabic name, standalone, icons 192/512/maskable in img/), theme color, apple-touch-icon, linked on all pages. All paths are relative, so it works under a subpath such as /amal-/.
 - Install: Android Chrome menu > "Install app" / "Add to Home screen"; iPhone Safari Share > "Add to Home Screen".
 - The service worker (sw.js, cache amal-v7) keeps visited pages for offline use. Audio and remote APIs still need internet.
+
+== v8 ==
+- معرض الصور: ٥٠ صورة من ويكيميديا كومنز بتراخيص حرة مع المصور والترخيص (data/mosques.js). صورة واحدة للكعبة وأخرى للقبة الخضراء فقط.
+- مركز الخلفيات: خطوط متعددة، ألوان، صورة من جهازك أو من المعرض، حجم وتعتيم ومحاذاة.
+- المواقيت بنظام ١٢ ساعة (ص/م).
+- صانع فيديو القرآن (videomaker.html): يسجل داخل المتصفح، بزمن حقيقي.
+
+== v9 ==
+- مدرسة التلاوة المصرية القديمة (oldschool.html): ١١ قارئًا بتسجيلات موثقة (روابط إسلام ويب + مصحف مرتل كامل لمحمود عبد الحكم)، مع بحث وفلتر. أحمد ندا: لم نجد له تسجيلًا.
