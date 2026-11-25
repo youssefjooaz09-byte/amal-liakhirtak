@@ -1,0 +1,9 @@
+/* Offline support: same-site files are cached as they are used (or via the Settings download button). Audio is never cached. */
+const V='amal-v5';
+self.addEventListener('install',e=>{self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+const API=/^https:\/\/(api\.quran\.com|api\.alquran\.cloud|cdn\.jsdelivr\.net|api\.aladhan\.com|ar\.wikipedia\.org|commons\.wikimedia\.org|upload\.wikimedia\.org)\//;
+self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET'||r.headers.has('range'))return;const u=new URL(r.url);
+ if(/\.mp3($|\?)/.test(u.pathname))return;
+ if(u.origin===location.origin){e.respondWith(caches.open(V).then(async c=>{const hit=await c.match(r,{ignoreSearch:r.mode==='navigate'});const net=fetch(r).then(res=>{if(res.ok)c.put(r,res.clone());return res}).catch(()=>null);return hit||(await net)||new Response('offline',{status:503})}))}
+ else if(API.test(r.url)){e.respondWith(fetch(r).then(res=>{if(res.ok){const cp=res.clone();caches.open(V).then(c=>c.put(r,cp))}return res}).catch(()=>caches.match(r).then(h=>h||Response.error())))}});
