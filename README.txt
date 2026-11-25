@@ -27,3 +27,8 @@
 - Search: now also covers Qisas al-Anbiya (Ibn Kathir) and the scholars excerpts, besides Quran, adhkar, tafsir and (optional) hadith.
 - Report an error (report.html): form that opens a prefilled WhatsApp message to the owner for review before sending. Buttons on each ayah and hadith.
 - Contact: WhatsApp icon (opens the chat, number is not printed on the page) and Facebook icon in the footer and contact.html.
+
+=== v7: installable app (PWA) ===
+- manifest.webmanifest (Arabic name, standalone, icons 192/512/maskable in img/), theme color, apple-touch-icon, linked on all pages. All paths are relative, so it works under a subpath such as /amal-/.
+- Install: Android Chrome menu > "Install app" / "Add to Home screen"; iPhone Safari Share > "Add to Home Screen".
+- The service worker (sw.js, cache amal-v7) keeps visited pages for offline use. Audio and remote APIs still need internet.
