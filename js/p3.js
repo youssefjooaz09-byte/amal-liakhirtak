@@ -156,7 +156,7 @@ function mkBank(Q){const B=[];const nameQ=s=>'سورة '+s.name;const uniq={};Q.
  B.push({id:'cnt114',cat:'القرآن الكريم',l:'e',q:'كم عدد سور القرآن الكريم؟',a:'١١٤',d:['١١٣','١١٦','١٢٠'],e:'عدد السور ١١٤ سورة.'});
  B.push({id:'cntA',cat:'القرآن الكريم',l:'h',q:'كم عدد آيات القرآن الكريم في المصحف (برواية حفص)؟',a:'٦٢٣٦',d:['٦٦٦٦','٦٠٠٠','٦٣٤٨'],e:'عدد الآيات ٦٢٣٦ آية بعد العدّ الكوفي، كما في المصدر المعتمد.'});
  FACTS.forEach((f,i)=>B.push({id:'f'+i,cat:/نبي|موسى|يونس|داود|إبراهيم|الزبور|التوراة/.test(f[0])?'الأنبياء':/غزوة|الصحاب|الخليف|الفاروق|زوج|هاج|وُلد|غار/.test(f[0])?'السيرة والصحابة':'العقيدة والعبادات',l:f[4],q:f[0],a:f[1],d:f[2],e:f[3]}));
- return B.filter(x=>new Set([x.a,...x.d]).size===x.d.length+1&&x.d.length>=1)}
+ return B.concat(window.EXTRA_BANK||[]).filter(x=>new Set([x.a,...x.d]).size===x.d.length+1&&x.d.length>=1)}
 let BANK=null;window.__bankDbg=()=>BANK;
 function seeded(seed){let s=0;for(const c of seed)s=(s*31+c.charCodeAt(0))>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 Pages.quiz=async(p)=>{const Q=await needQ();await loadScript('data/juz.js','JUZ').catch(()=>{});BANK=BANK||mkBank(Q);const cats=['الكل',...new Set(BANK.map(b=>b.cat))];const st=LS.get('qstats',{pts:0,played:0,best:0,hist:[]});const lv=Math.floor(st.pts/150)+1;
@@ -174,4 +174,5 @@ Pages.quiz=async(p)=>{const Q=await needQ();await loadScript('data/juz.js','JUZ'
  const pick=(pool,rand)=>{const out=[];let last='';const a=pool.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(rand()*(k+1));[a[k],a[j]]=[a[j],a[k]]}const prev=LS.get('qprev',[]);const fresh=a.filter(x=>!prev.includes(x.id));(fresh.length>=10?fresh:a).slice(0,10).forEach(x=>out.push(x));return out};
  $('#qs').onclick=()=>{const c=$('#qc').value,l=$('#ql').value;const pool=BANK.filter(b=>(c==='الكل'||b.cat===c)&&(!l||b.l===l));if(pool.length<4){toast('عدد الأسئلة غير كافٍ');return}const qs=pick(pool,Math.random);LS.set('qprev',qs.map(x=>x.id));run(qs,c)};
  $('#qd').onclick=()=>{const r=seeded('amal'+today());const pool=BANK.slice().sort((x,y)=>x.id<y.id?-1:1);const a=pool.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(r()*(k+1));[a[k],a[j]]=[a[j],a[k]]}run(a.slice(0,10),'تحدي اليوم '+today())}};
+if(window.AmalExtra9)window.AmalExtra9(API);
 };
