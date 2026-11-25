@@ -1,4 +1,4 @@
-window.AmalExtra=function(API){if(window.AmalExtra6)window.AmalExtra6(API);if(window.AmalExtra4)window.AmalExtra4(API);if(window.AmalExtra7)window.AmalExtra7(API);
+window.AmalExtra=function(API){if(window.AmalExtra6)window.AmalExtra6(API);if(window.AmalExtra4)window.AmalExtra4(API);if(window.AmalExtra7)window.AmalExtra7(API);if(window.AmalExtra8)window.AmalExtra8(API);
 'use strict';
 const {Pages,app,$,$$,LS,AR,esc,norm,loadScript,needQ,toast,copy,share,crumbs}=API;
 const today=()=>new Date().toISOString().slice(0,10);
