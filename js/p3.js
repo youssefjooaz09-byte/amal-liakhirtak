@@ -177,4 +177,5 @@ Pages.quiz=async(p)=>{const Q=await needQ();await loadScript('data/juz.js','JUZ'
 if(window.AmalExtra9)window.AmalExtra9(API);
 if(window.AmalExtra11)window.AmalExtra11(API);
 if(window.AmalExtra12)window.AmalExtra12(API);
+if(window.AmalExtra13)window.AmalExtra13(API);
 };
