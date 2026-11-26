@@ -49,14 +49,7 @@ Pages.book=async(p)=>{const L=await LIB(),b=L.find(x=>x.id===p.get('id'));if(!b)
  $('#sr').onclick=e=>{const a=e.target.closest('[data-g]');if(!a)return;e.preventDefault();pg=+a.dataset.g;show()};
 };
 /* ---------------- Imams of the Two Harams ---------------- */
-Pages.imams=async()=>{const I=await loadScript('data/imams.js','IMAMS'),Q=await needQ();let q='',m='';
- app.innerHTML=crumbs([['أئمة الحرمين الشريفين']])+libCSS+`<h2 class="sec">أئمة الحرمين الشريفين</h2><div class="notice">التسجيلات: تلاوات كاملة للمصحف المرتل برواية حفص من مشروع «MP3Quran». الخطب والدروس لم أجد لها روابط مباشرة موثقة بعد، لذلك لا تظهر هنا.</div>
- <div class="toolbar"><input class="field" id="iq" placeholder="ابحث باسم الإمام" style="flex:1"><select class="field" id="im"><option value="">كل المساجد</option><option value="h">المسجد الحرام</option><option value="n">المسجد النبوي</option></select></div><div class="im" id="il"></div>`;
- const draw=()=>{const n=norm(q);const R=I.filter(x=>(!n||norm(x.name).includes(n))&&(!m||x.m===m));
-  $('#il').innerHTML=R.map(x=>`<div class="card" style="text-align:center"><div class="mono">${esc(x.name[0])}</div><h3>${esc(x.name)}</h3><div class="muted">${x.m==='h'?'المسجد الحرام':'المسجد النبوي'}${x.id===137?' · لا يوجد مصدر رسمي لوضعه الحالي':''}</div>
-   <select class="field" data-i="${x.id}" style="width:100%;margin:8px 0">${x.s.map(s=>`<option value="${s}">${AR(s)}. ${esc(Q[s-1].name)}</option>`).join('')}</select><audio controls preload="none" style="width:100%" data-a="${x.id}"></audio></div>`).join('')||'<div class="muted">لا نتائج.</div>';
-  $$('#il select').forEach(sel=>{const x=I.find(o=>o.id==sel.dataset.i),au=$(`audio[data-a="${x.id}"]`);const set=()=>{au.src=x.base+String(sel.value).padStart(3,'0')+'.mp3'};set();sel.onchange=()=>{set();au.play().catch(()=>{})};au.onended=()=>{const i=x.s.indexOf(+sel.value);if(i<x.s.length-1){sel.value=x.s[i+1];set();au.play().catch(()=>{})}};au.onplay=()=>$$('#il audio').forEach(o=>{if(o!==au)o.pause()})})};
- $('#iq').oninput=e=>{q=e.target.value;draw()};$('#im').onchange=e=>{m=e.target.value;draw()};draw()};
+Pages.imams=async()=>{location.replace('reciters.html')};
 
 /* ---------------- Majalis al-Ilm ---------------- */
 const MJ=()=>loadScript('data/majalis.js','MAJALIS');

@@ -176,4 +176,5 @@ Pages.quiz=async(p)=>{const Q=await needQ();await loadScript('data/juz.js','JUZ'
  $('#qd').onclick=()=>{const r=seeded('amal'+today());const pool=BANK.slice().sort((x,y)=>x.id<y.id?-1:1);const a=pool.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(r()*(k+1));[a[k],a[j]]=[a[j],a[k]]}run(a.slice(0,10),'تحدي اليوم '+today())}};
 if(window.AmalExtra9)window.AmalExtra9(API);
 if(window.AmalExtra11)window.AmalExtra11(API);
+if(window.AmalExtra12)window.AmalExtra12(API);
 };

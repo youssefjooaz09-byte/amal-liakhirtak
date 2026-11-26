@@ -216,13 +216,13 @@ Pages.video=async(p)=>{const V=await VD(),x=V.find(y=>String(y.id)===p.get('id')
 const SD=()=>loadScript('data/sheikhs.js','SHVID');
 const SHI={'الشيخ أمجد سمير':{u:'https://www.amgadsamir.com/',n:'الموقع الرسمي amgadsamir.com',y:'https://www.youtube.com/@amgad_samir'},'الشيخ سمير مصطفى':{u:'https://www.youtube.com/@samirmoustafa',n:'قناة الشيخ الرسمية على يوتيوب',y:'https://www.youtube.com/@samirmoustafa'},'الشيخ محمد أحمد حسن':{u:'https://www.youtube.com/c/OfficialAzharEG',n:'قناة الأزهر الشريف الرسمية على يوتيوب',y:'https://www.youtube.com/c/OfficialAzharEG'}};
 Pages.sheikhs=async(p)=>{const V=await SD();let q=p.get('q')||'',a=p.get('a')||'',g=p.get('g')||'',lim=30;
- const names=Object.keys(SHI);
- const gl=()=>[...new Set(V.filter(x=>!a||x.a===a).map(x=>x.g))];
- const draw=()=>{const L=V.filter(x=>(!a||x.a===a)&&(!g||x.g===g)&&(!q||norm(x.t+' '+x.g+' '+x.a).includes(norm(q))));
+ const names=Object.keys(SHI).filter(n=>V.some(x=>x.a===n&&!x.r));
+ const gl=()=>[...new Set(V.filter(x=>!x.r&&(!a||x.a===a)).map(x=>x.g))];
+ const draw=()=>{const L=V.filter(x=>!x.r&&(!a||x.a===a)&&(!g||x.g===g)&&(!q||norm(x.t+' '+x.g+' '+x.a).includes(norm(q))));
   $('#sl').innerHTML=L.slice(0,lim).map(x=>`<a class="card" style="display:block;margin:8px 0" href="sheikh.html?v=${x.v}"><b style="font-family:Amiri;font-size:1.1rem">${esc(x.t)}</b><div class="muted">${esc(x.a)} · ${esc(x.g)}</div></a>`).join('')||'<div class="notice">لا نتائج.</div>';
   $('#sn').textContent=AR(L.length)+' مقطع';$('#sm').style.display=L.length>lim?'':'none'};
  const fillG=()=>{$('#sg').innerHTML='<option value="">كل السلاسل والقوائم</option>'+gl().map(n=>`<option ${n===g?'selected':''}>${esc(n)}</option>`).join('')};
- wrapP('دروس الشيوخ','دروس مرئية',`<div class="notice">دروس للشيخ أمجد سمير والشيخ سمير مصطفى بطلب من صاحب الموقع. تُعرض من يوتيوب نفسه (مشغّل يوتيوب الرسمي) من قناتيهما، وتم التحقق من أن كل مقطع يعمل ويتبع قناتهما. العناوين والسلاسل كما نشرها الشيخ. وتلاوات الشيخ محمد أحمد حسن (طالب أزهري، إمام التراويح بالجامع الأزهر) منشورة على قناة الأزهر الشريف الرسمية، وتُعرض من مشغّل يوتيوب نفسه. مقاطع الشيخ سمير مصطفى مأخوذة من قوائم تشغيل قناته الرسمية وأغلبها مقاطع قصيرة، وسلاسل الشيخ أمجد سمير من مكتبته الرسمية.</div>
+ wrapP('دروس الشيوخ','دروس مرئية',`<div class="notice">دروس للشيخ أمجد سمير والشيخ سمير مصطفى بطلب من صاحب الموقع. تُعرض من يوتيوب نفسه (مشغّل يوتيوب الرسمي) من قناتيهما، وتم التحقق من أن كل مقطع يعمل ويتبع قناتهما. العناوين والسلاسل كما نشرها الشيخ. مقاطع الشيخ سمير مصطفى مأخوذة من قوائم تشغيل قناته الرسمية وأغلبها مقاطع قصيرة، وسلاسل الشيخ أمجد سمير من مكتبته الرسمية.</div>
  <div class="p9row"><input class="field" id="sq" type="search" placeholder="ابحث بالعنوان" value="${esc(q)}" style="flex:1;min-width:0"></div>
  <div class="p9row" style="margin:8px 0"><select class="field" id="sa" style="flex:1;min-width:0"><option value="">كل الشيوخ</option>${names.map(n=>`<option ${n===a?'selected':''} value="${n}">${n} (${AR(V.filter(x=>x.a===n).length)})</option>`).join('')}</select><select class="field" id="sg" style="flex:1;min-width:0"></select></div>
  <div class="muted" id="sn"></div><div id="sl"></div><button class="btn gold" id="sm" style="width:100%;margin:10px 0">عرض المزيد</button>
@@ -231,13 +231,13 @@ Pages.sheikhs=async(p)=>{const V=await SD();let q=p.get('q')||'',a=p.get('a')||'
  $('#sq').oninput=e=>{q=e.target.value;lim=30;draw()};$('#sa').onchange=e=>{a=e.target.value;g='';lim=30;fillG();draw()};$('#sg').onchange=e=>{g=e.target.value;lim=30;draw()};$('#sm').onclick=()=>{lim+=30;draw()}};
 Pages.sheikh=async(p)=>{const V=await SD(),x=V.find(y=>y.v===p.get('v'));if(!x){app.innerHTML='<div class="notice">المقطع غير موجود.</div>';return}
  const S=V.filter(y=>y.g===x.g&&y.a===x.a),i=S.indexOf(x),st=LS.get('vidset',{rate:1,auto:true}),I=SHI[x.a];
- wrapP(esc(x.t),'دروس الشيوخ',`<div class="muted">${esc(x.a)} · ${esc(x.g)}</div>
+ wrapP(esc(x.t),x.r?'القرّاء':'دروس الشيوخ',`<div class="muted">${esc(x.a)} · ${esc(x.g)}</div>
  <div class="card" style="margin:10px 0"><div style="position:relative;padding-top:56.25%;background:#000;border-radius:10px;overflow:hidden"><iframe id="yf" src="https://www.youtube-nocookie.com/embed/${x.v}?enablejsapi=1&rel=0&playsinline=1" title="${esc(x.t)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>
  <div class="card"><b>إعدادات الفيديو</b>
  <div class="p9row" style="margin:8px 0"><span>السرعة:</span>${[0.75,1,1.25,1.5,2].map(r=>`<button class="btn sm ${r===st.rate?'gold':''}" data-r="${r}">${AR(r)}×</button>`).join('')}</div>
  <div class="notice">الجودة: من زر الترس ⚙ داخل المشغّل نفسه (تلقائي، ٢٤٠، ٣٦٠، ٧٢٠ ... حسب ما يوفره يوتيوب لهذا المقطع). الجودة التلقائية تتغير حسب سرعة الإنترنت. وفي المشغّل أيضاً الترجمة وملء الشاشة.</div></div>
  ${S.length>1?`<div class="p9row" style="margin:10px 0">${i>0?`<a class="btn" href="sheikh.html?v=${S[i-1].v}">السابق</a>`:''}${i<S.length-1?`<a class="btn gold" href="sheikh.html?v=${S[i+1].v}">التالي</a>`:''}<span class="muted">${AR(i+1)} من ${AR(S.length)} في «${esc(x.g)}»</span></div>`:''}
- <div class="muted" style="margin-top:10px">المصدر: <a href="https://www.youtube.com/watch?v=${x.v}" target="_blank" rel="noopener">المقطع على يوتيوب (${esc(x.c)})</a> · <a href="${I.u}" target="_blank" rel="noopener">${I.n}</a></div><br><a class="btn" href="sheikhs.html">كل دروس الشيوخ</a>`);
+ <div class="muted" style="margin-top:10px">المصدر: <a href="https://www.youtube.com/watch?v=${x.v}" target="_blank" rel="noopener">المقطع على يوتيوب (${esc(x.c)})</a> · <a href="${I.u}" target="_blank" rel="noopener">${I.n}</a></div><br><a class="btn" href="${x.r?'reciters.html':'sheikhs.html'}">${x.r?'كل القرّاء':'كل دروس الشيوخ'}</a>`);
  const f=$('#yf'),send=(fn,a)=>{try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:fn,args:a||[]}),'*')}catch(e){}};
  const setR=r=>send('setPlaybackRate',[r]);f.addEventListener('load',()=>{setTimeout(()=>setR(st.rate),800);setTimeout(()=>setR(st.rate),2500)});
  $$('[data-r]').forEach(b=>b.onclick=()=>{const r=+b.dataset.r;setR(r);LS.set('vidset',{...LS.get('vidset',st),rate:r});$$('[data-r]').forEach(z=>z.classList.toggle('gold',z===b))})};
