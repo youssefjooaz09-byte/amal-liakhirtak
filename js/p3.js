@@ -155,7 +155,7 @@ function mkBank(Q){const B=[];const nameQ=s=>'سورة '+s.name;const uniq={};Q.
  B.push({id:'nobasm',cat:'القرآن الكريم',l:'m',q:'أي سورة لا تبدأ بالبسملة؟',a:'التوبة',d:['الأنفال','الفاتحة','يونس'],e:'سورة التوبة هي السورة الوحيدة التي لا تبدأ بالبسملة.'});
  B.push({id:'cnt114',cat:'القرآن الكريم',l:'e',q:'كم عدد سور القرآن الكريم؟',a:'١١٤',d:['١١٣','١١٦','١٢٠'],e:'عدد السور ١١٤ سورة.'});
  B.push({id:'cntA',cat:'القرآن الكريم',l:'h',q:'كم عدد آيات القرآن الكريم في المصحف (برواية حفص)؟',a:'٦٢٣٦',d:['٦٦٦٦','٦٠٠٠','٦٣٤٨'],e:'عدد الآيات ٦٢٣٦ آية بعد العدّ الكوفي، كما في المصدر المعتمد.'});
- FACTS.forEach((f,i)=>B.push({id:'f'+i,cat:/نبي|موسى|يونس|داود|إبراهيم|الزبور|التوراة/.test(f[0])?'الأنبياء':/غزوة|الصحاب|الخليف|الفاروق|زوج|هاج|وُلد|غار/.test(f[0])?'السيرة والصحابة':'العقيدة والعبادات',l:f[4],q:f[0],a:f[1],d:f[2],e:f[3]}));
+ FACTS.forEach((f,i)=>B.push({id:'f'+i,cat:/نبي|موسى|يونس|داود|إبراهيم|الزبور|التوراة/.test(f[0])?'الأنبياء':/غزوة|الصحاب|الخليف|الفاروق|زوج|هاج|وُلد|غار/.test(f[0])?(/الصحاب|الخليف|الفاروق/.test(f[0])?'الصحابة':'السيرة النبوية'):'العقيدة والعبادات',l:f[4],q:f[0],a:f[1],d:f[2],e:f[3]}));
  return B.concat(window.EXTRA_BANK||[]).filter(x=>new Set([x.a,...x.d]).size===x.d.length+1&&x.d.length>=1)}
 let BANK=null;window.__bankDbg=()=>BANK;
 function seeded(seed){let s=0;for(const c of seed)s=(s*31+c.charCodeAt(0))>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
@@ -178,4 +178,7 @@ if(window.AmalExtra9)window.AmalExtra9(API);
 if(window.AmalExtra11)window.AmalExtra11(API);
 if(window.AmalExtra12)window.AmalExtra12(API);
 if(window.AmalExtra13)window.AmalExtra13(API);
+if(window.AmalExtra14)window.AmalExtra14(API);
+if(window.AmalExtra15)window.AmalExtra15(API);
+if(window.AmalExtra16)window.AmalExtra16(API);
 };

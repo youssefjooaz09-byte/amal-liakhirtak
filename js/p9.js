@@ -126,7 +126,7 @@ Pages.glossary=async(p)=>{const G=await GL();let q=p.get('q')||'';
 const oq=Pages.quiz;
 Pages.quiz=async(p)=>{try{if(!window.EXTRA_BANK){const N=await loadScript('data/hadith/nawawi-1.js','H_nawawi_1');const ids=[1,3,4,5,6,7,9,13,17,20,22,23,30,31,41];const nar={};
   ids.forEach(n=>{const h=N.find(x=>x[0]===n);const m=h&&h[1].match(/^(?:عَنْ|عَن)\s+(.{3,90}?)\s+(?:رَضِيَ|رضي)/);if(m)nar[n]=m[1].trim()});
-  const all=Object.values(nar);window.EXTRA_BANK=[];
+  const all=Object.values(nar);window.EXTRA_BANK=(window.QX||[]).slice();
   Object.keys(nar).forEach(n=>{const h=N.find(x=>x[0]==n);const mm=h[1].match(/صلى الله عليه (?:و )?سلم\)?\s*(?:-[^-]*-\s*)?(?:(?:يَقُولُ|قَالَ|قَال|فَقَالَ)\s*:?\s*)?([^]*)/);if(!mm)return;let ws=mm[1].replace(/["«»“”:]/g,'').split(/\s+/).filter(Boolean);const cut=ws.findIndex(x=>/^(رَوَاهُ|حَدِيثٌ|\[|\.)/.test(x));if(cut>=0)ws=ws.slice(0,cut);if(ws.length<6||ws.some(x=>/صلى/.test(x)))return;const w=ws.slice(0,14).join(' ');
    const d=all.filter(x=>x!==nar[n]).sort((a,b)=>hash(a+n)-hash(b+n)).slice(0,3);
    window.EXTRA_BANK.push({id:'hn'+n,cat:'الحديث',l:'m',q:`من راوي هذا الحديث من الأربعين النووية؟\n«${w}…»`,a:nar[n],d,e:`هذا الحديث رقم ${AR(n)} في الأربعين النووية، وهو عن ${nar[n]} رضي الله عنه.`})})}}catch(e){}
