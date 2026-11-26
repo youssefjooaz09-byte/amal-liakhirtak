@@ -81,13 +81,13 @@ Pages.cards=async(p)=>{const Q=await needQ(),T=await loadScript('data/tafsir-muy
   <div class="p9row"><button class="btn gold" id="cs">مشاركة كصورة</button><button class="btn" id="cc">نسخ النص</button><button class="btn" id="cj">حفظ في مفكرتي</button><a class="btn" href="${c.link}">في سياقه</a></div><br><canvas id="cv" width="1080" height="1350" style="display:none"></canvas><div id="cp"></div>`);
   $$('[data-t]').forEach(b=>b.onclick=()=>{cur=+b.dataset.t;draw()});
   $('#cn').onclick=()=>{off++;C=build();draw()};
-  const txt=`${c.t}\n(${c.src})\n\nموقع زاد | ZAD`;
+  const txt=`${c.t}\n(${c.src})\n\nموقع اعمل لآخرتك`;
   $('#cc').onclick=()=>navigator.clipboard.writeText(txt).then(()=>toast('تم النسخ'));
   $('#cj').onclick=()=>{LS.set('journal',[{id:'j'+Date.now(),type:c.k,text:c.t,src:c.src,ts:Date.now()},...LS.get('journal',[])]);toast('تم الحفظ في مفكرتي')};
   $('#cs').onclick=async()=>{const D=window.AmalDraw;await D.loadFont('Amiri');await D.loadFont('Amiri Quran');await D.loadFont('Reem Kufi');const cv=$('#cv'),x=cv.getContext('2d'),w=1080,h=1350;
    const gr=x.createLinearGradient(0,0,w,h);gr.addColorStop(0,'#0c231c');gr.addColorStop(.6,'#275344');gr.addColorStop(1,'#1f6a50');x.fillStyle=gr;x.fillRect(0,0,w,h);
    x.strokeStyle='#e2c779';x.lineWidth=6;x.strokeRect(30,30,w-60,h-60);x.lineWidth=2;x.strokeRect(48,48,w-96,h-96);
-   x.textAlign='center';x.direction='rtl';x.fillStyle='#e2c779';x.font='56px "Reem Kufi"';x.fillText('زاد | ZAD',w/2,150);x.font='36px "Amiri"';x.fillText(c.k,w/2,215);
+   x.textAlign='center';x.direction='rtl';x.fillStyle='#e2c779';x.font='56px "Reem Kufi"';x.fillText('اعمل لآخرتك',w/2,150);x.font='36px "Amiri"';x.fillText(c.k,w/2,215);
    x.save();x.translate(0,230);const ok=D.drawBlock(x,w,h-480,c.t,{font:c.k==='آية'?'Amiri Quran':'Amiri',color:'#f6f1e6',scale:1});x.restore();
    x.fillStyle='#e2c779';x.font='34px "Amiri"';D.wrap(x,c.src,w-200).forEach((l,i)=>x.fillText(l,w/2,h-190+i*48));
    if(!ok){toast('النص طويل للصورة، استخدم النسخ');return}

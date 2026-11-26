@@ -19,7 +19,7 @@ Pages.report=async(p)=>{const Q=await needQ();const t=p.get('t')||'ayah';let ref
  <label>أين وجدت الخطأ؟ (سورة وآية، رقم الحديث، اسم الصفحة)</label><input class="field" id="rr" value="${esc(ref)}" style="width:100%">
  <label>ما الخطأ؟ وما الصحيح مع المصدر إن أمكن</label><textarea class="field" id="rd" rows="5" style="width:100%"></textarea>
  <div class="toolbar"><a class="btn gold" id="rs" href="#" target="_blank" rel="noopener">إرسال عبر واتساب</a><button class="btn" id="rc">نسخ الرسالة</button></div></div>`;
- const msg=()=>`إبلاغ عن خطأ في موقع «زاد | ZAD»\nالنوع: ${$('#rt').value}\nالموضع: ${$('#rr').value||'-'}\nالتفاصيل: ${$('#rd').value||'-'}\nالصفحة: ${from||document.referrer||location.href}`;
+ const msg=()=>`إبلاغ عن خطأ في موقع «اعمل لآخرتك»\nالنوع: ${$('#rt').value}\nالموضع: ${$('#rr').value||'-'}\nالتفاصيل: ${$('#rd').value||'-'}\nالصفحة: ${from||document.referrer||location.href}`;
  const upd=()=>{$('#rs').href=WA+'?text='+encodeURIComponent(msg())};['#rt','#rr','#rd'].forEach(s=>$(s).addEventListener('input',upd));upd();
  $('#rc').onclick=()=>{navigator.clipboard.writeText(msg()).then(()=>toast('تم نسخ الرسالة'),()=>toast('تعذر النسخ'))}};
 /* ---------- scholars ---------- */
@@ -43,7 +43,7 @@ async function render(o){await Promise.all([document.fonts.load('48px Amiri'),do
  const rg=x.createRadialGradient(w/2,h*.4,10,w/2,h*.4,Math.max(w,h)*.7);rg.addColorStop(0,'rgba(255,255,255,.10)');rg.addColorStop(1,'rgba(0,0,0,.25)');x.fillStyle=rg;x.fillRect(0,0,w,h);
  pattern(x,w,h,d);x.direction='rtl';x.textAlign='center';x.textBaseline='alphabetic';
  const pad=Math.min(w,h)*.12;let ok=true;
- x.fillStyle=d.g;x.font=`bold ${Math.round(Math.min(w,h)*.035)}px Cairo, Tajawal, sans-serif`;x.fillText('زاد | ZAD',w/2,pad*.85);
+ x.fillStyle=d.g;x.font=`bold ${Math.round(Math.min(w,h)*.035)}px Cairo, Tajawal, sans-serif`;x.fillText('اعمل لآخرتك',w/2,pad*.85);
  if(o.text){const maxW=w-pad*2,maxH=h-pad*2.9;let fs=Math.round(Math.min(w,h)*.07),lines;const fam=o.quran?'"Amiri Quran", Amiri, serif':'Amiri, serif';
   for(;fs>=26;fs-=2){x.font=`${fs}px ${fam}`;lines=wrap(x,o.text,maxW);if(lines.length*fs*1.75<=maxH)break}
   if(fs<26||lines.length*fs*1.75>maxH){ok=false}
@@ -73,6 +73,6 @@ Pages.wallpapers=async(p)=>{const Q=await needQ();
  ['#wt','#wsz','#wd'].forEach(s=>$(s).onchange=()=>{if(s==='#wt')sel();draw()});
  const blob=()=>new Promise(r=>$('#wc').toBlob(r,'image/png'));
  $('#wdl').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amal-liakhirtak-'+$('#wt').value+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
- $('#wsh').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const f=new File([b],'amal-liakhirtak.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'زاد | ZAD'}).catch(()=>{});else toast('المشاركة المباشرة غير متاحة في هذا المتصفح، استخدم زر التنزيل.')};
+ $('#wsh').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const f=new File([b],'amal-liakhirtak.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'اعمل لآخرتك'}).catch(()=>{});else toast('المشاركة المباشرة غير متاحة في هذا المتصفح، استخدم زر التنزيل.')};
  sel();draw()};
 };

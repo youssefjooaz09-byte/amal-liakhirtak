@@ -16,7 +16,7 @@ async function share(text,url){if(navigator.share){try{await navigator.share({te
 
 /* ---------- share menu (WhatsApp / Facebook / system share / copy) ---------- */
 const SITE_URL=()=>new URL('./',location.href).href;
-function shareMenu(o){const url=o.url||SITE_URL();const t=String(o.text||'').trim();const txt=(t.length>900?t.slice(0,900).replace(/\s+\S*$/,'')+'…':t);const full=(txt?txt+'\n\n':'')+'زاد | ZAD: '+url;
+function shareMenu(o){const url=o.url||SITE_URL();const t=String(o.text||'').trim();const txt=(t.length>900?t.slice(0,900).replace(/\s+\S*$/,'')+'…':t);const full=(txt?txt+'\n\n':'')+'اعمل لآخرتك: '+url;
  document.querySelectorAll('.shm').forEach(n=>n.remove());
  const d=document.createElement('div');d.className='shm';d.setAttribute('role','dialog');d.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center';
  d.innerHTML='<div style="background:#10281f;border:1px solid var(--gold,#e2c779);border-radius:14px 14px 0 0;padding:14px;width:min(520px,100%);max-height:85vh;overflow:auto;direction:rtl"><h3 style="margin:0 0 8px;color:var(--gold,#e2c779)">مشاركة</h3><div class="muted" style="white-space:pre-wrap;font-size:.85rem;max-height:20vh;overflow:auto;border:1px dashed rgba(226,199,121,.4);border-radius:8px;padding:6px"></div><div class="toolbar" style="flex-wrap:wrap;margin-top:10px"><button class="btn gold" data-m="n">مشاركة عبر الهاتف (اختر واتساب أو فيسبوك…)</button><button class="btn" data-m="w">واتساب (رسالة)</button><button class="btn" data-m="f">فيسبوك</button><button class="btn" data-m="c">نسخ النص والرابط</button><button class="btn sm" data-m="x">إغلاق</button></div><div class="muted" style="font-size:.78rem;margin-top:8px;line-height:1.7">حدود صريحة: الموقع لا يستطيع النشر وحده على حالة واتساب أو صفحة فيسبوك، أنت تختار المكان من قائمة المشاركة وتضغط نشر. رابط الموقع مكتوب في النص. فيسبوك يأخذ الرابط فقط، لذلك يُنسخ النص أولًا فألصقه في المنشور. إرفاق الصورة أو الفيديو يعتمد على هاتفك ومتصفحك.</div></div>';
@@ -26,8 +26,8 @@ function shareMenu(o){const url=o.url||SITE_URL();const t=String(o.text||'').tri
   else if(m==='c'){await copy(full)}
   else if(m==='w'){window.open('https://wa.me/?text='+encodeURIComponent(full),'_blank','noopener')}
   else if(m==='f'){await copy(full);toast('نُسخ النص. ألصقه في منشور فيسبوك');window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url),'_blank','noopener')}
-  else if(m==='n'){try{if(o.file){const f=await o.file();if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:full,title:o.title||'زاد | ZAD'});return}toast('هاتفك لا يدعم مشاركة هذا الملف مباشرة، سيُشارك النص والرابط فقط. نزّل الملف وأرفقه يدويًا.')}
-    if(navigator.share){await navigator.share({title:o.title||'زاد | ZAD',text:full})}else toast('متصفحك لا يدعم مشاركة الهاتف المباشرة. استخدم واتساب أو فيسبوك أو النسخ.')}catch(err){if(err&&err.name!=='AbortError')toast('تعذرت المشاركة')}}};
+  else if(m==='n'){try{if(o.file){const f=await o.file();if(f&&navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:full,title:o.title||'اعمل لآخرتك'});return}toast('هاتفك لا يدعم مشاركة هذا الملف مباشرة، سيُشارك النص والرابط فقط. نزّل الملف وأرفقه يدويًا.')}
+    if(navigator.share){await navigator.share({title:o.title||'اعمل لآخرتك',text:full})}else toast('متصفحك لا يدعم مشاركة الهاتف المباشرة. استخدم واتساب أو فيسبوك أو النسخ.')}catch(err){if(err&&err.name!=='AbortError')toast('تعذرت المشاركة')}}};
  return d}
 const shareBtn=(title,text,cls)=>`<button class="btn ${cls||'gold'}" type="button" data-shm-t="${esc(title)}" data-shm-x="${esc(text)}">مشاركة (واتساب / فيسبوك)</button>`;
 window.shareMenu=shareMenu;window.shareBtn=shareBtn;
@@ -37,13 +37,13 @@ const NAV=[['index.html','الرئيسية','home'],['quran.html','القرآن 
 const SOON=[];
 const SOON_PHASE={tafsir:4,prophets:4,seerah:4,companions:4,images:5,fiqh:5,'names-of-allah':5,library:5,salah:5,qibla:5};
 document.body.insertAdjacentHTML('afterbegin',`
-<header class="top"><div class="bar"><a class="logo" href="index.html">زاد | ZAD<small>طريقك للعلم والذكر والعمل الصالح</small></a>
+<header class="top"><div class="bar"><a class="logo" href="index.html">اعمل لآخرتك<small>طريقك للعلم والذكر والعمل الصالح</small></a>
 <button class="btn" id="menuToggle" aria-label="القائمة">☰</button>
 <nav class="menu" id="menu">${NAV.map(n=>`<a href="${n[0]}" data-p="${n[2]}">${n[1]}</a>`).join('')}</nav>
 <div class="tools"><div class="searchbox"><input id="q" type="search" placeholder="🔍 ابحث في القرآن والسور" autocomplete="off"><div id="sres"></div></div>
 <button class="btn" id="theme" title="الوضع الليلي/النهاري">🌙</button></div></div></header>
 <main id="app"></main>
-<footer id="foot"><div style="font-family:Amiri,serif;font-size:1.15rem;color:var(--gold2);margin:10px 0">هذا العمل صنع لوجه الله وابتغاء مرضاته ولا تنسونا من صالح دعائكم</div><div>إعداد: يوسف راضي</div><div class="muted" style="margin-top:8px">© زاد | ZAD — النص القرآني: مصحف المدينة (رواية حفص) عبر Al Quran Cloud، التفسير: التفسير الميسر (مجمع الملك فهد). التلاوات تُبثّ مباشرة من mp3quran.net. الأحاديث: Hadith API (sunnah.com). الأذكار: حصن المسلم.</div></footer>
+<footer id="foot"><div style="font-family:Amiri,serif;font-size:1.15rem;color:var(--gold2);margin:10px 0">هذا العمل صنع لوجه الله وابتغاء مرضاته ولا تنسونا من صالح دعائكم</div><div>إعداد: يوسف راضي</div><div class="muted" style="margin-top:8px">© اعمل لآخرتك — النص القرآني: مصحف المدينة (رواية حفص) عبر Al Quran Cloud، التفسير: التفسير الميسر (مجمع الملك فهد). التلاوات تُبثّ مباشرة من mp3quran.net. الأحاديث: Hadith API (sunnah.com). الأذكار: حصن المسلم.</div></footer>
 <div id="toast"></div><div id="queue"></div>
 <div id="player"><div class="in"><div class="art">🕌</div><div class="meta"><b id="pTitle">اختر سورة للاستماع</b><span id="pSub">—</span></div>
 <div class="ctl"><button class="btn" id="pPrev" title="السورة السابقة">⏮</button><button class="btn gold" id="pPlay" title="تشغيل/إيقاف">▶</button><button class="btn" id="pNext" title="السورة التالية">⏭</button><button class="btn" id="pRestart" title="من البداية">↺</button><button class="btn" id="pDl" title="تنزيل هذه السورة بصوت القارئ إلى جهازك">⬇ تنزيل</button><button class="btn" id="pRep" title="وضع التشغيل: متتابع، تكرار السورة، تكرار الكل">🔁</button></div>
@@ -157,7 +157,7 @@ Pages.home=async()=>{const Q=await needQ();
  <div class="sidec"><h4>حديث اليوم</h4>${hd?`<div class="qt" style="font-family:Amiri;font-size:1.05rem">${esc(hs)}</div><div class="muted">الأربعون النووية — حديث رقم ${AR(hd[0])}</div><a class="btn sm" href="hadith.html?c=nawawi">اقرأ المزيد</a>`:'<div class="muted">—</div>'}</div>
  <div class="sidec"><h4>الوصول السريع</h4><div class="qgrid"><a href="salah.html"><span>${icon('clock')}</span>مواقيت الصلاة</a><a href="qibla.html"><span>${icon('compass')}</span>اتجاه القبلة</a><a href="names-of-allah.html"><span>${icon('spark')}</span>الأسماء الحسنى</a><a href="library.html"><span>${icon('lib')}</span>المكتبة</a><a href="fiqh.html"><span>${icon('mosque')}</span>الفقه</a><a href="reciters.html"><span>${icon('headset')}</span>القرّاء</a></div></div>
  <div class="sidec"><h4>المفضلة</h4><div id="favs" class="muted"></div></div>`;
- app.innerHTML=`<section class="herob"><div class="stars"></div>${sc}<h1>زاد | ZAD</h1><p>طريقك للعلم والذكر والعمل الصالح</p><div class="verse">﴿${esc(Q[4].ayahs[0].length>0?Q[4].ayahs[34]:'')}﴾ <span class="muted" style="color:#e2c779">${Q[4].name}: ${AR(35)}</span></div><div class="toolbar" style="position:relative;justify-content:center"><a class="btn gold big" href="#sections" onclick="document.getElementById('sections').scrollIntoView({behavior:'smooth'});return false">ابدأ رحلتك الآن</a><a class="btn" href="quran.html">ابدأ القراءة</a><a class="btn primary" href="reciters.html">استمع للقرّاء</a><span id="cont"></span></div></section><div class="dash"><div class="mainc">
+ app.innerHTML=`<section class="herob"><div class="stars"></div>${sc}<h1>اعمل لآخرتك</h1><p>طريقك للعلم والذكر والعمل الصالح</p><div class="verse">﴿${esc(Q[4].ayahs[0].length>0?Q[4].ayahs[34]:'')}﴾ <span class="muted" style="color:#e2c779">${Q[4].name}: ${AR(35)}</span></div><div class="toolbar" style="position:relative;justify-content:center"><a class="btn gold big" href="#sections" onclick="document.getElementById('sections').scrollIntoView({behavior:'smooth'});return false">ابدأ رحلتك الآن</a><a class="btn" href="quran.html">ابدأ القراءة</a><a class="btn primary" href="reciters.html">استمع للقرّاء</a><span id="cont"></span></div></section><div class="dash"><div class="mainc">
  
  <div class="tiles" id="sections">${tiles.map(t=>`<a class="tile ${t[3]?'soon':''}" href="${t[0]}"><span class="ic">${icon(t[1])}</span>${t[2]}${t[3]?'<span class="tag">قريبًا</span>':''}</a>`).join('')}</div>
  <div class="panels">

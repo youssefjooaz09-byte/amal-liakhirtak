@@ -1,6 +1,6 @@
 {
-  "name": "زاد | ZAD",
-  "short_name": "زاد | ZAD",
+  "name": "اعمل لآخرتك",
+  "short_name": "اعمل لآخرتك",
   "description": "طريقك للعلم والذكر والعمل الصالح",
   "lang": "ar",
   "dir": "rtl",
@@ -9,7 +9,7 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#275344",
+  "background_color": "#0b1230",
   "theme_color": "#275344",
   "categories": ["education", "books", "lifestyle"],
   "icons": [

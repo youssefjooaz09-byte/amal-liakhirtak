@@ -70,7 +70,7 @@ Pages.wallpapers=async(p)=>{const Q=await needQ(),M=await loadScript('data/mosqu
   let ok=true;const pad=Math.min(w,h)*.12;x.direction='rtl';
   if(text){ok=drawBlock(x,w,h,text,{font,color:$('#wcol').value,scale:+$('#wsc').value/100,shadow:$('#wsh').checked,align:$('#wal').value,...txo('w')});
    if(ok&&src&&$('#wsr').checked){x.font=`${Math.round(Math.min(w,h)*.03)}px Cairo, sans-serif`;x.fillStyle=g;x.textAlign='center';x.shadowBlur=0;x.fillText(src,w/2,h-pad*.75)}}
-  {const mn=Math.min(w,h);x.direction='rtl';x.textAlign='center';if($('#wlg').checked){if(logo){const ls=mn*(+$('#wls').value/100),lx=w/2+(+$('#wlx').value/100)*w,ly=pad*.8+(+$('#wly').value/100)*h;x.save();x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.clip();x.drawImage(logo,lx-ls/2,ly-ls/2,ls,ls);x.restore();x.strokeStyle=g;x.lineWidth=Math.max(2,ls*.03);x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.stroke()}}else if($('#wst').checked){x.font=`bold ${Math.round(mn*.032)}px Cairo, sans-serif`;x.fillStyle=g;x.fillText('زاد | ZAD',w/2,pad*.8)}}
+  {const mn=Math.min(w,h);x.direction='rtl';x.textAlign='center';if($('#wlg').checked){if(logo){const ls=mn*(+$('#wls').value/100),lx=w/2+(+$('#wlx').value/100)*w,ly=pad*.8+(+$('#wly').value/100)*h;x.save();x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.clip();x.drawImage(logo,lx-ls/2,ly-ls/2,ls,ls);x.restore();x.strokeStyle=g;x.lineWidth=Math.max(2,ls*.03);x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.stroke()}}else if($('#wst').checked){x.font=`bold ${Math.round(mn*.032)}px Cairo, sans-serif`;x.fillStyle=g;x.fillText('اعمل لآخرتك',w/2,pad*.8)}}
   if(bg&&bg.credit){x.font=`${Math.round(Math.min(w,h)*.02)}px Cairo, sans-serif`;x.fillStyle='rgba(255,255,255,.85)';x.direction='ltr';x.fillText(bg.credit,w/2,h-pad*.35)}
   last={ok};$('#wmsg').textContent=ok?'':'النص أطول من أن يتسع بخط مقروء. قلّل عدد الآيات أو اختر مقاسًا أكبر.';if(!ok){x.fillStyle='rgba(0,0,0,.5)';x.fillRect(0,0,w,h)}};
  ['#wf','#wcol','#wsc','#wov','#wsh','#wfr','#wal','#wsz','#woy','#wox','#wwd','#wlh','#wst','#wsr','#wlg','#wls','#wlx','#wly'].forEach(i=>{$(i).addEventListener('input',draw);$(i).addEventListener('change',draw)});
@@ -79,7 +79,7 @@ Pages.wallpapers=async(p)=>{const Q=await needQ(),M=await loadScript('data/mosqu
  $('#upl').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{S.up=im;$('#bgs').value='up';draw()};im.src=URL.createObjectURL(f)};
  const blob=()=>new Promise(r=>$('#wc').toBlob(r,'image/png'));
  $('#wdl').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}try{const b=await blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amal-liakhirtak.png';a.click()}catch(e){toast('تعذر التصدير')}};
- $('#wshare').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}shareMenu({title:'زاد | ZAD',text:'',file:async()=>new File([await blob()],'amal-liakhirtak.png',{type:'image/png'})})};
+ $('#wshare').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}shareMenu({title:'اعمل لآخرتك',text:'',file:async()=>new File([await blob()],'amal-liakhirtak.png',{type:'image/png'})})};
  sel();draw()};
 
 /* ---------------- Quran video maker ---------------- */
@@ -119,7 +119,7 @@ Pages.videomaker=async()=>{const Q=await needQ();const NAT=await loadScript('dat
   const m=Math.min(w,h)*.04;if($('#vfr').checked){x.strokeStyle=g;x.lineWidth=3;x.strokeRect(m,m,w-2*m,h-2*m)}
   x.direction='rtl';x.textAlign='center';const mn=Math.min(w,h);
   if($('#vlg').checked){if(logo){const ls=mn*(+$('#vls').value/100),lx=w/2+(+$('#vlx').value/100)*w,ly=h*.08+(+$('#vly').value/100)*h;x.save();x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.clip();x.drawImage(logo,lx-ls/2,ly-ls/2,ls,ls);x.restore();x.strokeStyle=g;x.lineWidth=Math.max(2,ls*.03);x.beginPath();x.arc(lx,ly,ls/2,0,Math.PI*2);x.stroke()}}
-  else if($('#vst').checked){x.font=`bold ${Math.round(mn*.036)}px Cairo, sans-serif`;x.fillStyle=g;x.fillText('زاد | ZAD',w/2,h*.08)}
+  else if($('#vst').checked){x.font=`bold ${Math.round(mn*.036)}px Cairo, sans-serif`;x.fillStyle=g;x.fillText('اعمل لآخرتك',w/2,h*.08)}
   fxDraw(t,dur,w,h,tx=>drawBlock(x,w,h,tx,{font:$('#vf2').value,color:$('#vcol').value,scale:+$('#vsc').value/100,shadow:true,align:'center',...txo('v')}),text);
   if($('#vsr').checked){x.font=`${Math.round(mn*.032)}px Cairo, sans-serif`;x.fillStyle=g;x.fillText(src,w/2,h*.93)}
   if(bgCredit){x.font=`${Math.round(mn*.02)}px Cairo, sans-serif`;x.fillStyle='rgba(255,255,255,.85)';x.direction='ltr';x.fillText(bgCredit,w/2,h*.972);x.direction='rtl'}};
@@ -162,7 +162,7 @@ Pages.videomaker=async()=>{const Q=await needQ();const NAT=await loadScript('dat
   if(ac)try{ac.close()}catch(e){}if(bgKind==='v')bg.pause();
   if(!blob||!vok){st('فشل إنشاء الفيديو في هذا المتصفح (الناتج بلا صورة). جرّب مقاسًا أصغر أو مدى أقصر أو متصفح كروم حديث.');$('#vp').style.display='none';busy=false;$('#vgo').disabled=false;prev();return}
   const ext=type.includes('mp4')?'mp4':'webm',url=URL.createObjectURL(blob);
-  $('#vo').innerHTML=`<video controls src="${url}" style="max-width:100%;max-height:50vh;margin-top:8px"></video><div><a class="btn gold" download="amal-quran-video.${ext}" href="${url}">تنزيل الفيديو (${ext.toUpperCase()}، ${(blob.size/1048576).toFixed(1)} ميغابايت)</a> <button class="btn" id="vsh" type="button">مشاركة (واتساب / فيسبوك)</button></div>`;$('#vsh').onclick=()=>shareMenu({title:'فيديو قرآني',text:'فيديو قرآني من موقع زاد | ZAD',file:async()=>new File([blob],'amal-quran-video.'+ext,{type:blob.type||type})});
+  $('#vo').innerHTML=`<video controls src="${url}" style="max-width:100%;max-height:50vh;margin-top:8px"></video><div><a class="btn gold" download="amal-quran-video.${ext}" href="${url}">تنزيل الفيديو (${ext.toUpperCase()}، ${(blob.size/1048576).toFixed(1)} ميغابايت)</a> <button class="btn" id="vsh" type="button">مشاركة (واتساب / فيسبوك)</button></div>`;$('#vsh').onclick=()=>shareMenu({title:'فيديو قرآني',text:'فيديو قرآني من موقع اعمل لآخرتك',file:async()=>new File([blob],'amal-quran-video.'+ext,{type:blob.type||type})});
   st((audioOk?'تم الإنشاء مع التلاوة.':'تم الإنشاء بدون صوت.')+' '+note);$('#vp').style.display='none';busy=false;$('#vgo').disabled=false;prev()};
  prev()};
 
