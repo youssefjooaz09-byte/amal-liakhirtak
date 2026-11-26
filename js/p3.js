@@ -59,7 +59,7 @@ function card(c,b,h){const k=`${c}:${b}:${h[0]}`,f=favH().has(k);
  <div class="toolbar"><button class="btn sm" data-a="copy">نسخ</button><button class="btn sm" data-a="share">مشاركة</button><button class="btn sm" data-a="fav">${f?'★ إزالة':'☆ مفضلة'}</button></div></div>`}
 function wire(root){root.onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const c=b.closest('[data-k]'),k=c.dataset.k,[col,bk,n]=k.split(':');
  const txt=c.querySelector('div[style*=Amiri]').textContent+`\n[${COL[col][0]} — حديث رقم ${AR(n)}]`;
- if(b.dataset.a==='copy')copy(txt);else if(b.dataset.a==='share')share(txt);
+ if(b.dataset.a==='copy')copy(txt);else if(b.dataset.a==='share')shareMenu({title:'حديث نبوي',text:txt,url:new URL(`hadith.html?c=${col}&b=${bk}`,location.href).href});
  else{const s=favH();s.has(k)?s.delete(k):s.add(k);LS.set('favh',[...s]);b.textContent=s.has(k)?'★ إزالة':'☆ مفضلة'}}}
 /* ================= AZKAR / DUAS ================= */
 const AZ=['أذكار الصباح والمساء','أذكار النوم','أذكار الاستيقاظ من النوم','الأذكار بعد السلام من الصلاة','الذكر عند الخروج من المنزل','الذكر عند دخول المنزل','دعاء السفر','دعاء الركوب','ذكر الرجوع من السفر','الدعاء قبل الطعام','الدعاء عند الفراغ من الطعام','فضل التسبيح و التحميد، و التهليل، و التكبير','كيف كان النبي يسبح؟','أذكار الآذان','دعاء دخول المسجد','دعاء الخروج من المسجد','دعاء الذهاب إلى المسجد'];

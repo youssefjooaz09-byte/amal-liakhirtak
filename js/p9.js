@@ -287,4 +287,7 @@ Pages.remind=async()=>{const s=rget();const perm=window.Notification?Notificatio
  $('#r_perm').onclick=async()=>{if(!window.Notification){toast('غير مدعوم');return}await Notification.requestPermission();st()};
  $('#r_test').onclick=()=>rnote('تجربة: يا عم صلّ على النبي ﷺ','هكذا سيظهر التذكير',true);st()};
 
+
+/* share bar for story pages */
+{const _st=Pages.story;Pages.story=async function(p){const r=await _st.call(this,p);const h=app.querySelector('h2.sec'),box=app.querySelector('.p9');if(h&&box&&!box.querySelector('[data-shm-t]')){const body=[...box.querySelectorAll('.card,.p9q')].map(n=>n.textContent.trim()).filter(Boolean).join('\n');const w=document.createElement('div');w.className='toolbar';w.style.margin='14px 0';w.innerHTML=shareBtn(h.textContent,h.textContent+'\n\n'+body.slice(0,700));box.appendChild(w)}return r}}
 };

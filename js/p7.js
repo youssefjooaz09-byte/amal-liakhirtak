@@ -79,7 +79,7 @@ Pages.wallpapers=async(p)=>{const Q=await needQ(),M=await loadScript('data/mosqu
  $('#upl').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{S.up=im;$('#bgs').value='up';draw()};im.src=URL.createObjectURL(f)};
  const blob=()=>new Promise(r=>$('#wc').toBlob(r,'image/png'));
  $('#wdl').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}try{const b=await blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amal-liakhirtak.png';a.click()}catch(e){toast('تعذر التصدير')}};
- $('#wshare').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const f=new File([b],'amal-liakhirtak.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'اعمل لآخرتك'}).catch(()=>{});else toast('المشاركة المباشرة غير متاحة هنا، استخدم زر التنزيل.')};
+ $('#wshare').onclick=async()=>{if(!last.ok){toast('لا توجد صورة صالحة');return}shareMenu({title:'اعمل لآخرتك',text:'',file:async()=>new File([await blob()],'amal-liakhirtak.png',{type:'image/png'})})};
  sel();draw()};
 
 /* ---------------- Quran video maker ---------------- */
@@ -162,7 +162,7 @@ Pages.videomaker=async()=>{const Q=await needQ();const NAT=await loadScript('dat
   if(ac)try{ac.close()}catch(e){}if(bgKind==='v')bg.pause();
   if(!blob||!vok){st('فشل إنشاء الفيديو في هذا المتصفح (الناتج بلا صورة). جرّب مقاسًا أصغر أو مدى أقصر أو متصفح كروم حديث.');$('#vp').style.display='none';busy=false;$('#vgo').disabled=false;prev();return}
   const ext=type.includes('mp4')?'mp4':'webm',url=URL.createObjectURL(blob);
-  $('#vo').innerHTML=`<video controls src="${url}" style="max-width:100%;max-height:50vh;margin-top:8px"></video><div><a class="btn gold" download="amal-quran-video.${ext}" href="${url}">تنزيل الفيديو (${ext.toUpperCase()}، ${(blob.size/1048576).toFixed(1)} ميغابايت)</a></div>`;
+  $('#vo').innerHTML=`<video controls src="${url}" style="max-width:100%;max-height:50vh;margin-top:8px"></video><div><a class="btn gold" download="amal-quran-video.${ext}" href="${url}">تنزيل الفيديو (${ext.toUpperCase()}، ${(blob.size/1048576).toFixed(1)} ميغابايت)</a> <button class="btn" id="vsh" type="button">مشاركة (واتساب / فيسبوك)</button></div>`;$('#vsh').onclick=()=>shareMenu({title:'فيديو قرآني',text:'فيديو قرآني من موقع اعمل لآخرتك',file:async()=>new File([blob],'amal-quran-video.'+ext,{type:blob.type||type})});
   st((audioOk?'تم الإنشاء مع التلاوة.':'تم الإنشاء بدون صوت.')+' '+note);$('#vp').style.display='none';busy=false;$('#vgo').disabled=false;prev()};
  prev()};
 

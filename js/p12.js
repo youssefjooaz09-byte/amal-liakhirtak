@@ -71,4 +71,7 @@ Pages.tasmee=async()=>{const Q=await needQ();const SR=window.SpeechRecognition||
   rec.onend=()=>{if(on){try{rec.start()}catch(e){stop()}}};
   try{rec.start();$('#tgo').disabled=true;$('#tstop').disabled=false;$('#tst').textContent='أسمعك... اقرأ من حفظك.';render('',false)}catch(e){$('#tst').textContent='تعذر بدء الميكروفون.'}};
 };
+
+/* share bar for hekaya page */
+{const _hk=Pages.hekaya;Pages.hekaya=async function(p){const r=await _hk.call(this,p);const h=app.querySelector('.hk h2.sec'),box=app.querySelector('.hk');if(h&&box&&!box.querySelector('[data-shm-t]')){const ps=[...box.querySelectorAll('p')].slice(0,3).map(n=>n.textContent.trim()).join('\n');const w=document.createElement('div');w.className='toolbar';w.style.margin='14px 0';w.innerHTML=shareBtn(h.textContent,h.textContent+' (حكاية خيالية من تأليفنا)\n\n'+ps+'…');box.appendChild(w)}return r}}
 };
