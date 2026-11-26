@@ -213,7 +213,7 @@ Pages.video=async(p)=>{const V=await VD(),x=V.find(y=>String(y.id)===p.get('id')
 
 
 /* ---------- sheikhs' official YouTube lessons ---------- */
-const SD=()=>loadScript('data/sheikhs.js','SHVID');
+const SD=()=>Promise.all([loadScript('data/sheikhs.js','SHVID'),loadScript('data/ghaleez.js','GHZ').catch(()=>[])]).then(([a,b])=>a.concat(b));
 const SHI={'الشيخ أمجد سمير':{u:'https://www.amgadsamir.com/',n:'الموقع الرسمي amgadsamir.com',y:'https://www.youtube.com/@amgad_samir'},'الشيخ سمير مصطفى':{u:'https://www.youtube.com/@samirmoustafa',n:'قناة الشيخ الرسمية على يوتيوب',y:'https://www.youtube.com/@samirmoustafa'},'الشيخ محمد الغليظ':{u:'https://www.youtube.com/@mohelghaleez',n:'قناته على يوتيوب (Mohammad Elghaleez)',y:'https://www.youtube.com/@mohelghaleez'},'الشيخ محمد أحمد حسن':{u:'https://www.youtube.com/c/OfficialAzharEG',n:'قناة الأزهر الشريف الرسمية على يوتيوب',y:'https://www.youtube.com/c/OfficialAzharEG'}};
 Pages.sheikhs=async(p)=>{const V=await SD();let q=p.get('q')||'',a=p.get('a')||'',g=p.get('g')||'',lim=30;
  const names=Object.keys(SHI).filter(n=>V.some(x=>x.a===n&&!x.r));
@@ -222,7 +222,7 @@ Pages.sheikhs=async(p)=>{const V=await SD();let q=p.get('q')||'',a=p.get('a')||'
   $('#sl').innerHTML=L.slice(0,lim).map(x=>`<a class="card" style="display:block;margin:8px 0" href="sheikh.html?v=${x.v}"><b style="font-family:Amiri;font-size:1.1rem">${esc(x.t)}</b><div class="muted">${esc(x.a)} · ${esc(x.g)}</div></a>`).join('')||'<div class="notice">لا نتائج.</div>';
   $('#sn').textContent=AR(L.length)+' مقطع';$('#sm').style.display=L.length>lim?'':'none'};
  const fillG=()=>{$('#sg').innerHTML='<option value="">كل السلاسل والقوائم</option>'+gl().map(n=>`<option ${n===g?'selected':''}>${esc(n)}</option>`).join('')};
- wrapP('دروس الشيوخ','دروس مرئية',`<div class="notice">دروس للشيخ أمجد سمير والشيخ سمير مصطفى والشيخ محمد الغليظ بطلب من صاحب الموقع. تُعرض من يوتيوب نفسه (مشغّل يوتيوب الرسمي) من قنواتهم، وتم التحقق من أن كل مقطع يعمل ويتبع قناة صاحبه. العناوين والسلاسل كما نشرها الشيخ. مقاطع الشيخ سمير مصطفى مأخوذة من قوائم تشغيل قناته الرسمية وأغلبها مقاطع قصيرة، وسلاسل الشيخ أمجد سمير من مكتبته الرسمية. مقاطع الشيخ محمد الغليظ من قوائم التشغيل (السلاسل) على قناته على يوتيوب، وهي ست سلاسل مختارة (كلمات، هذه أخلاقنا، لماذا لا ترى عيوبك، بيت فيه رجل، اللذة الحقيقية، حج بقلبك).</div>
+ wrapP('دروس الشيوخ','دروس مرئية',`<div class="notice">دروس للشيخ أمجد سمير والشيخ سمير مصطفى والشيخ محمد الغليظ بطلب من صاحب الموقع. تُعرض من يوتيوب نفسه (مشغّل يوتيوب الرسمي) من قنواتهم، وتم التحقق من أن كل مقطع يعمل ويتبع قناة صاحبه. العناوين والسلاسل كما نشرها الشيخ. مقاطع الشيخ سمير مصطفى مأخوذة من قوائم تشغيل قناته الرسمية وأغلبها مقاطع قصيرة، وسلاسل الشيخ أمجد سمير من مكتبته الرسمية. مقاطع الشيخ محمد الغليظ من قوائم التشغيل (السلاسل) على قناته على يوتيوب، وهي كل ما وجدناه في قوائم تشغيل قناته مما يمكن تشغيله داخل الموقع، مرتب حسب السلسلة (اختر الشيخ ثم السلسلة من القوائم أعلاه).</div>
  <div class="p9row"><input class="field" id="sq" type="search" placeholder="ابحث بالعنوان" value="${esc(q)}" style="flex:1;min-width:0"></div>
  <div class="p9row" style="margin:8px 0"><select class="field" id="sa" style="flex:1;min-width:0"><option value="">كل الشيوخ</option>${names.map(n=>`<option ${n===a?'selected':''} value="${n}">${n} (${AR(V.filter(x=>x.a===n).length)})</option>`).join('')}</select><select class="field" id="sg" style="flex:1;min-width:0"></select></div>
  <div class="muted" id="sn"></div><div id="sl"></div><button class="btn gold" id="sm" style="width:100%;margin:10px 0">عرض المزيد</button>
