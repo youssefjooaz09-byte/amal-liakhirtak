@@ -169,4 +169,123 @@ Pages.story=async(p)=>{const S=await STO(),x=S.find(y=>y.id===p.get('id'));if(!x
  <h3 class="sec">تفسير السعدي <small class="muted">تيسير الكريم الرحمن، عبد الرحمن السعدي</small></h3><details class="card"><summary>اعرض التفسير</summary>${sa.map(i=>`<div style="margin:8px 0"><span class="muted">آية ${AR(i)}</span><div class="p9t" style="font-size:1.05rem">${esc(SA[i])}</div></div>`).join('')||'<div class="muted">لا يوجد.</div>'}</details>
  <br><a class="btn" href="stories.html">كل القصص</a>`)};
 
+/* ---------- video lessons (IslamHouse) ---------- */
+const VP='https://d1.islamhouse.com/data/ar/ih_videos/mp4/';
+const VD=()=>loadScript('data/videos.js','VIDEOS');
+const VCATS=[['العقيدة والتوحيد',/عقيد|توحيد|الإيمان|الشهادتين|أسماء الله|الشرك|الواسطية/],['الفقه والعبادات',/صلاة|الصلاة|حج|الحج|عمرة|زكاة|صيام|صوم|رمضان|وضوء|الطهارة|فقه|أحكام|الأضحية|جنازة|العيد/],['السيرة والصحابة',/سيرة|الصحاب|النبي|الرسول|غزوة|الخلفاء/],['القرآن والتفسير',/قرآن|القرآن|تفسير|سورة|المصحف|التجويد|التبيان/],['الآداب والأخلاق والتزكية',/آداب|الآداب|أخلاق|الأخلاق|تزكية|دعاء|الدعاء|ذكر|الأذكار|التوبة|الصبر|الرحمة|الإخلاص/],['الأطفال',/أطفال|الأطفال|للصغار/],['الدعوة والتعريف بالإسلام',/الدعوة|الدعاة|التعريف بالإسلام|غير المسلمين|المسلم الجديد/]];
+const vcat=x=>{const t=x.t+' '+x.a;for(const [n,r] of VCATS)if(r.test(x.t))return n;return 'متنوعة'};
+const mb=n=>AR(String(n).replace('.',','))+' ميجا';
+Pages.videos=async(p)=>{const V=await VD();V.forEach(x=>{x.c=x.c||vcat(x)});let q=p.get('q')||'',c=p.get('c')||'',a=p.get('a')||'',lim=30;
+ const authors=Object.entries(V.reduce((m,x)=>{if(x.a)m[x.a]=(m[x.a]||0)+1;return m},{})).sort((x,y)=>y[1]-x[1]).slice(0,25);
+ const draw=()=>{const L=V.filter(x=>(!c||x.c===c)&&(!a||x.a===a)&&(!q||norm(x.t+' '+x.a+' '+x.d).includes(norm(q))));
+  $('#vl').innerHTML=L.slice(0,lim).map(x=>`<a class="card" style="display:block;margin:8px 0" href="video.html?id=${x.id}"><b style="font-family:Amiri;font-size:1.15rem">${esc(x.t)}</b><div class="muted">${esc(x.a||'')}${x.a?' · ':''}${x.c} · ${x.l.length>1?AR(x.l.length)+' مقطع':'مقطع واحد'}</div></a>`).join('')||'<div class="notice">لا نتائج.</div>';
+  $('#vn').textContent=AR(L.length)+' مادة مرئية';$('#vm').style.display=L.length>lim?'':'none'};
+ const tot=V.reduce((n,x)=>n+x.l.length,0);
+ wrapP('دروس مرئية','دروس مرئية',`<div class="notice">${AR(V.length)} مادة مرئية (${AR(tot)} مقطع) من موقع إسلام هاوس الرسمي، يُشغَّل كل مقطع من ملفاته مباشرة وتم التحقق من تشغيل كل ملف. التصنيف حسب الموضوع تقريبي ويعتمد على عنوان المادة، والوصف والعنوان والملقي كما هي في المصدر.</div>
+ <div class="p9row"><input class="field" id="vq" type="search" placeholder="ابحث بالعنوان أو اسم الشيخ" value="${esc(q)}" style="flex:1;min-width:0"></div>
+ <div class="p9row" style="margin:8px 0"><select class="field" id="vc" style="flex:1;min-width:0"><option value="">كل المواضيع</option>${[...VCATS.map(x=>x[0]),'متنوعة'].map(n=>`<option ${n===c?'selected':''}>${n}</option>`).join('')}</select><select class="field" id="va" style="flex:1;min-width:0"><option value="">كل المشايخ والجهات</option>${authors.map(([n,k])=>`<option value="${esc(n)}" ${n===a?'selected':''}>${esc(n)} (${AR(k)})</option>`).join('')}</select></div>
+ <div class="muted" id="vn"></div><div id="vl"></div><button class="btn gold" id="vm" style="width:100%;margin:10px 0">عرض المزيد</button>`);
+ $('#vq').oninput=e=>{q=e.target.value;lim=30;draw()};$('#vc').onchange=e=>{c=e.target.value;lim=30;draw()};$('#va').onchange=e=>{a=e.target.value;lim=30;draw()};$('#vm').onclick=()=>{lim+=30;draw()};draw()};
+Pages.video=async(p)=>{const V=await VD(),x=V.find(y=>String(y.id)===p.get('id'));if(!x){app.innerHTML='<div class="notice">المادة غير موجودة.</div>';return}
+ let n=Math.min(Math.max(+(p.get('n')||LS.get('vidlast',{})[x.id]||1),1),x.l.length);const L=x.l[n-1],u=VP+L[1];
+ const pk='vidpos',gp=()=>LS.get(pk,{}),st=LS.get('vidset',{rate:1,auto:true});const key=x.id+':'+n;
+ wrapP(esc(x.t),'دروس مرئية',`<div class="muted">${esc(x.a||'')} · ${vcat(x)}</div>
+ <div class="card" style="margin:10px 0"><video id="vp" controls preload="metadata" playsinline style="width:100%;max-height:70vh;background:#000;border-radius:10px" src="${esc(u)}"></video>
+ <div class="muted" style="margin-top:6px">${esc(L[0])} · ${mb(L[2])}</div></div>
+ <div class="card"><b>إعدادات الفيديو</b>
+ <div class="p9row" style="margin:8px 0"><span>السرعة:</span>${[0.75,1,1.25,1.5,2].map(r=>`<button class="btn sm ${r===st.rate?'gold':''}" data-r="${r}">${AR(r)}×</button>`).join('')}</div>
+ <div class="p9row" style="margin:8px 0"><button class="btn sm" id="vb">⏪ ١٠ ثوانٍ</button><button class="btn sm" id="vf">١٠ ثوانٍ ⏩</button><button class="btn sm" id="vpp">نافذة عائمة</button><button class="btn sm" id="vfs">ملء الشاشة</button></div>
+ <label class="p9row"><input type="checkbox" id="vau" ${st.auto?'checked':''}> تشغيل المقطع التالي تلقائياً</label>
+ <div class="p9row" style="margin:8px 0"><a class="btn sm" href="${esc(u)}" download target="_blank" rel="noopener">تحميل المقطع (${mb(L[2])})</a></div>
+ <div class="notice">الجودة: المصدر يوفر نسخة واحدة من كل مقطع بجودة ثابتة، فلا يمكن للموقع تغييرها. ولتوفير الإنترنت لا يبدأ التحميل إلا عند التشغيل، ويمكنك تحميل المقطع لمشاهدته بدون اتصال.</div></div>
+ ${x.d?`<div class="notice">${esc(x.d)}</div>`:''}
+ ${x.l.length>1?`<h3 class="sec">المقاطع <small class="muted">${AR(x.l.length)}</small></h3><div class="p9g" style="grid-template-columns:repeat(auto-fill,minmax(120px,1fr))">${x.l.map((l,i)=>`<a class="btn ${i+1===n?'gold':''}" style="text-align:center" href="video.html?id=${x.id}&n=${i+1}" title="${esc(l[0])}">${AR(i+1)}</a>`).join('')}</div>`:''}
+ <div class="muted" style="margin-top:10px">المصدر: <a href="https://islamhouse.com/ar/videos/${x.id}/" target="_blank" rel="noopener">إسلام هاوس</a></div><br><a class="btn" href="videos.html">كل الدروس المرئية</a>`);
+ const v=$('#vp');const ls=LS.get('vidlast',{});ls[x.id]=n;LS.set('vidlast',ls);
+ v.playbackRate=st.rate;v.addEventListener('loadedmetadata',()=>{const t=gp()[key];if(t&&t>5&&t<v.duration-5)v.currentTime=t;v.playbackRate=st.rate});
+ let last=0;v.ontimeupdate=()=>{const s=Math.floor(v.currentTime);if(s-last>=5||s<last){last=s;const o=gp();o[key]=s;LS.set(pk,o)}};
+ v.onended=()=>{const o=gp();delete o[key];LS.set(pk,o);const s2=LS.get('vidset',st);if(s2.auto&&n<x.l.length)route(`video.html?id=${x.id}&n=${n+1}`,true)};
+ $$('[data-r]').forEach(b=>b.onclick=()=>{const r=+b.dataset.r;v.playbackRate=r;LS.set('vidset',{...LS.get('vidset',st),rate:r});$$('[data-r]').forEach(z=>z.classList.toggle('gold',z===b))});
+ $('#vb').onclick=()=>{v.currentTime=Math.max(0,v.currentTime-10)};$('#vf').onclick=()=>{v.currentTime=Math.min(v.duration||1e9,v.currentTime+10)};
+ $('#vau').onchange=e=>LS.set('vidset',{...LS.get('vidset',st),auto:e.target.checked});
+ $('#vpp').onclick=()=>{if(document.pictureInPictureEnabled)v.requestPictureInPicture().catch(()=>toast('غير مدعوم في هذا المتصفح'));else toast('غير مدعوم في هذا المتصفح')};
+ $('#vfs').onclick=()=>{(v.requestFullscreen||v.webkitEnterFullscreen||function(){}).call(v)}};
+
+
+/* ---------- sheikhs' official YouTube lessons ---------- */
+const SD=()=>loadScript('data/sheikhs.js','SHVID');
+const SHI={'الشيخ أمجد سمير':{u:'https://www.amgadsamir.com/',n:'الموقع الرسمي amgadsamir.com',y:'https://www.youtube.com/@amgad_samir'},'الشيخ سمير مصطفى':{u:'https://www.youtube.com/@samirmoustafa',n:'قناة الشيخ الرسمية على يوتيوب',y:'https://www.youtube.com/@samirmoustafa'}};
+Pages.sheikhs=async(p)=>{const V=await SD();let q=p.get('q')||'',a=p.get('a')||'',g=p.get('g')||'',lim=30;
+ const names=Object.keys(SHI);
+ const gl=()=>[...new Set(V.filter(x=>!a||x.a===a).map(x=>x.g))];
+ const draw=()=>{const L=V.filter(x=>(!a||x.a===a)&&(!g||x.g===g)&&(!q||norm(x.t+' '+x.g+' '+x.a).includes(norm(q))));
+  $('#sl').innerHTML=L.slice(0,lim).map(x=>`<a class="card" style="display:block;margin:8px 0" href="sheikh.html?v=${x.v}"><b style="font-family:Amiri;font-size:1.1rem">${esc(x.t)}</b><div class="muted">${esc(x.a)} · ${esc(x.g)}</div></a>`).join('')||'<div class="notice">لا نتائج.</div>';
+  $('#sn').textContent=AR(L.length)+' مقطع';$('#sm').style.display=L.length>lim?'':'none'};
+ const fillG=()=>{$('#sg').innerHTML='<option value="">كل السلاسل والقوائم</option>'+gl().map(n=>`<option ${n===g?'selected':''}>${esc(n)}</option>`).join('')};
+ wrapP('دروس الشيوخ','دروس مرئية',`<div class="notice">دروس للشيخ أمجد سمير والشيخ سمير مصطفى بطلب من صاحب الموقع. تُعرض من يوتيوب نفسه (مشغّل يوتيوب الرسمي) من قناتيهما، وتم التحقق من أن كل مقطع يعمل ويتبع قناتهما. العناوين والسلاسل كما نشرها الشيخ. مقاطع الشيخ سمير مصطفى مأخوذة من قوائم تشغيل قناته الرسمية وأغلبها مقاطع قصيرة، وسلاسل الشيخ أمجد سمير من مكتبته الرسمية.</div>
+ <div class="p9row"><input class="field" id="sq" type="search" placeholder="ابحث بالعنوان" value="${esc(q)}" style="flex:1;min-width:0"></div>
+ <div class="p9row" style="margin:8px 0"><select class="field" id="sa" style="flex:1;min-width:0"><option value="">كل الشيوخ</option>${names.map(n=>`<option ${n===a?'selected':''} value="${n}">${n} (${AR(V.filter(x=>x.a===n).length)})</option>`).join('')}</select><select class="field" id="sg" style="flex:1;min-width:0"></select></div>
+ <div class="muted" id="sn"></div><div id="sl"></div><button class="btn gold" id="sm" style="width:100%;margin:10px 0">عرض المزيد</button>
+ <div class="muted">${names.map(n=>`${n}: <a href="${SHI[n].u}" target="_blank" rel="noopener">${SHI[n].n}</a>`).join(' · ')}</div>`);
+ fillG();draw();
+ $('#sq').oninput=e=>{q=e.target.value;lim=30;draw()};$('#sa').onchange=e=>{a=e.target.value;g='';lim=30;fillG();draw()};$('#sg').onchange=e=>{g=e.target.value;lim=30;draw()};$('#sm').onclick=()=>{lim+=30;draw()}};
+Pages.sheikh=async(p)=>{const V=await SD(),x=V.find(y=>y.v===p.get('v'));if(!x){app.innerHTML='<div class="notice">المقطع غير موجود.</div>';return}
+ const S=V.filter(y=>y.g===x.g&&y.a===x.a),i=S.indexOf(x),st=LS.get('vidset',{rate:1,auto:true}),I=SHI[x.a];
+ wrapP(esc(x.t),'دروس الشيوخ',`<div class="muted">${esc(x.a)} · ${esc(x.g)}</div>
+ <div class="card" style="margin:10px 0"><div style="position:relative;padding-top:56.25%;background:#000;border-radius:10px;overflow:hidden"><iframe id="yf" src="https://www.youtube-nocookie.com/embed/${x.v}?enablejsapi=1&rel=0&playsinline=1" title="${esc(x.t)}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>
+ <div class="card"><b>إعدادات الفيديو</b>
+ <div class="p9row" style="margin:8px 0"><span>السرعة:</span>${[0.75,1,1.25,1.5,2].map(r=>`<button class="btn sm ${r===st.rate?'gold':''}" data-r="${r}">${AR(r)}×</button>`).join('')}</div>
+ <div class="notice">الجودة: من زر الترس ⚙ داخل المشغّل نفسه (تلقائي، ٢٤٠، ٣٦٠، ٧٢٠ ... حسب ما يوفره يوتيوب لهذا المقطع). الجودة التلقائية تتغير حسب سرعة الإنترنت. وفي المشغّل أيضاً الترجمة وملء الشاشة.</div></div>
+ ${S.length>1?`<div class="p9row" style="margin:10px 0">${i>0?`<a class="btn" href="sheikh.html?v=${S[i-1].v}">السابق</a>`:''}${i<S.length-1?`<a class="btn gold" href="sheikh.html?v=${S[i+1].v}">التالي</a>`:''}<span class="muted">${AR(i+1)} من ${AR(S.length)} في «${esc(x.g)}»</span></div>`:''}
+ <div class="muted" style="margin-top:10px">المصدر: <a href="https://www.youtube.com/watch?v=${x.v}" target="_blank" rel="noopener">المقطع على يوتيوب (${esc(x.c)})</a> · <a href="${I.u}" target="_blank" rel="noopener">${I.n}</a></div><br><a class="btn" href="sheikhs.html">كل دروس الشيوخ</a>`);
+ const f=$('#yf'),send=(fn,a)=>{try{f.contentWindow.postMessage(JSON.stringify({event:'command',func:fn,args:a||[]}),'*')}catch(e){}};
+ const setR=r=>send('setPlaybackRate',[r]);f.addEventListener('load',()=>{setTimeout(()=>setR(st.rate),800);setTimeout(()=>setR(st.rate),2500)});
+ $$('[data-r]').forEach(b=>b.onclick=()=>{const r=+b.dataset.r;setR(r);LS.set('vidset',{...LS.get('vidset',st),rate:r});$$('[data-r]').forEach(z=>z.classList.toggle('gold',z===b))})};
+
+
+/* ---------- prayer + salawat reminders (runs only while the site is open) ---------- */
+const RDEF={on:false,prayer:true,sal:true,every:30,snd:true,wake:false};
+const RP=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
+const RCLIP='6MI1SZtoryI';
+const rget=()=>({...RDEF,...LS.get('rem',{})});
+const rtimes=async()=>{const k=new Date().toDateString(),c=LS.get('remT',null);if(c&&c.k===k&&c.loc===JSON.stringify(LS.get('loc',null)))return c.T;
+ const loc=LS.get('loc',{n:'القاهرة',lat:30.0444,lon:31.2357}),meth=LS.get('pmeth',5),d=new Date();
+ const r=await fetch(`https://api.aladhan.com/v1/timings/${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}?latitude=${loc.lat}&longitude=${loc.lon}&method=${meth}`);if(!r.ok)throw new Error('http '+r.status);
+ const T=(await r.json()).data.timings;const o={};RP.forEach(([e])=>o[e]=String(T[e]).slice(0,5));LS.set('remT',{k,loc:JSON.stringify(LS.get('loc',null)),T:o});return o};
+const rplay=()=>{let b=document.getElementById('remclip');if(b)b.remove();b=document.createElement('div');b.id='remclip';
+ b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;width:220px;background:#0b1230;border:1px solid #c9a24b;border-radius:10px;padding:6px;direction:rtl';
+ b.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#e8d9a8;margin-bottom:4px"><span>مقطع الشيخ سمير مصطفى</span><button style="background:none;border:0;color:#fff;font-size:1.1rem" aria-label="إغلاق">✕</button></div><iframe src="https://www.youtube-nocookie.com/embed/${RCLIP}?autoplay=1&playsinline=1&rel=0" title="صل على النبي" allow="autoplay; encrypted-media" style="width:100%;height:118px;border:0;border-radius:6px"></iframe>`;
+ document.body.appendChild(b);b.querySelector('button').onclick=()=>b.remove();setTimeout(()=>{if(b.isConnected)b.remove()},30000)};
+const rnote=async(title,body,sound)=>{try{toast(title)}catch(e){}
+ if(window.Notification&&Notification.permission==='granted'){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification(title,{body,tag:'amal-rem',icon:'img/icon-192.png',badge:'img/icon-192.png',lang:'ar',dir:'rtl',renotify:true,data:{url:'remind.html'}})}catch(e){try{new Notification(title,{body,icon:'img/icon-192.png'})}catch(_){}}}
+ if(sound&&rget().snd)rplay()};
+const rtick=async()=>{const s=rget();if(!s.on)return;const now=Date.now(),fired=LS.get('remF',{}),today=new Date().toDateString();
+ if(fired.k!==today){fired.k=today;fired.p={}}
+ if(s.prayer){let T;try{T=await rtimes()}catch(e){T=null}
+  if(T)for(const [e,n] of RP){const [h,m]=T[e].split(':').map(Number),t=new Date();t.setHours(h,m,0,0);const dt=now-t.getTime();
+   if(dt>=0&&dt<15*60000&&!fired.p[e]){fired.p[e]=1;LS.set('remF',fired);await rnote('حان الآن وقت صلاة '+n,'قم إلى الصلاة. '+AR(h12x(T[e])),false)}}}
+ if(s.sal){const last=LS.get('remL',0);if(!last){LS.set('remL',now)}else if(now-last>=s.every*60000){LS.set('remL',now);await rnote('يا عم صلّ على النبي ﷺ','اللهم صلّ وسلّم على نبينا محمد',true)}}
+ LS.set('remF',fired)};
+const h12x=t=>{let [h,m]=t.split(':').map(Number);const ap=h>=12?'م':'ص';h=h%12||12;return h+':'+String(m).padStart(2,'0')+' '+ap};
+let wl=null;const rwake=async on=>{try{if(on&&'wakeLock' in navigator){wl=await navigator.wakeLock.request('screen');return true}if(wl){await wl.release();wl=null}}catch(e){}return false};
+if(!window.__remStarted){window.__remStarted=1;setInterval(()=>rtick().catch(()=>{}),15000);setTimeout(()=>rtick().catch(()=>{}),3000);
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){rtick().catch(()=>{});if(rget().wake)rwake(true)}})}
+Pages.remind=async()=>{const s=rget();const perm=window.Notification?Notification.permission:'unsupported';
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent),stand=(navigator.standalone||matchMedia('(display-mode: standalone)').matches);
+ wrapP('تذكير الصلاة والصلاة على النبي','الإعدادات',`<div class="notice"><b>اقرأ هذا أولاً (حدود حقيقية):</b> الموقع ثابت بدون خادم، فالتذكير يعمل <b>فقط والموقع أو التطبيق المثبّت مفتوح</b> (ولو في الخلفية ما دام المتصفح لم يوقفه). إذا أغلقت المتصفح أو التطبيق تماماً فلن يصلك أي إشعار، لأن إشعارات الإغلاق تحتاج خادماً خاصاً غير موجود. على الأندرويد قد يجمّد النظام الصفحة الخلفية بعد وقت لتوفير البطارية. على الآيفون الإشعارات لا تعمل إلا إذا ثبّتّ الموقع على الشاشة الرئيسية (iOS 16.4 فأعلى) وفتحته، والصفحة تتوقف عند قفل الشاشة. للتجربة الأفضل: ثبّت التطبيق، افتحه، فعّل الخيار أدناه لمنع إطفاء الشاشة، واترك الشاشة مفتوحة.</div>
+ <div class="card"><label class="p9row"><input type="checkbox" id="r_on" ${s.on?'checked':''}> <b>تشغيل التذكيرات</b></label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_p" ${s.prayer?'checked':''}> تذكير عند دخول وقت كل صلاة (الفجر، الظهر، العصر، المغرب، العشاء)</label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_s" ${s.sal?'checked':''}> تذكير بالصلاة على النبي ﷺ كل <select class="field" id="r_e" style="width:auto;display:inline-block">${[10,15,20,30,45,60].map(n=>`<option value="${n}" ${n===s.every?'selected':''}>${AR(n)}</option>`).join('')}</select> دقيقة</label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_snd" ${s.snd?'checked':''}> تشغيل مقطع الشيخ سمير مصطفى مع تذكير الصلاة على النبي</label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_w" ${s.wake?'checked':''}> منع إطفاء الشاشة أثناء فتح الصفحة (إن دعمه المتصفح)</label>
+ <div class="p9row" style="margin:10px 0"><button class="btn gold" id="r_perm">السماح بالإشعارات</button><button class="btn" id="r_test">تجربة الآن</button></div>
+ <div class="muted" id="r_st"></div></div>
+ <div class="notice">مواقيت الصلاة من AlAdhan حسب المدينة وطريقة الحساب المختارة في صفحة <a href="salah.html">المواقيت</a> (القاهرة افتراضياً)، وهي مرجع عام قد يختلف دقائق عن مسجدك.<br>الصوت: مقطع قصير (١٣ ثانية) من قناة الشيخ سمير مصطفى الرسمية على يوتيوب، <a href="https://www.youtube.com/watch?v=${RCLIP}" target="_blank" rel="noopener">رابط المقطع</a>، يُشغَّل بمشغّل يوتيوب الرسمي ولا يُنسخ ولا يُصنَّع. عنوانه «صل على النبي»؛ لم أستطع التحقق آلياً من اللفظ الدقيق فيه، فاستمع إليه مرة بزر «تجربة الآن». المتصفح قد يمنع التشغيل التلقائي للصوت قبل أن تتفاعل مع الصفحة، فاضغط تشغيل في المربع الصغير إن لم يبدأ.</div>`);
+ const save=()=>{LS.set('rem',{on:$('#r_on').checked,prayer:$('#r_p').checked,sal:$('#r_s').checked,every:+$('#r_e').value,snd:$('#r_snd').checked,wake:$('#r_w').checked});if(rget().on&&!LS.get('remL',0))LS.set('remL',Date.now());st()};
+ const st=()=>{const q=rget();$('#r_st').textContent=(window.Notification?'إذن الإشعارات: '+({granted:'مسموح',denied:'مرفوض (غيّره من إعدادات المتصفح)',default:'لم يُطلب بعد'}[Notification.permission]):'هذا المتصفح لا يدعم الإشعارات، ستظهر رسائل داخل الصفحة فقط.')+(ios&&!stand?' · على الآيفون ثبّت الموقع على الشاشة الرئيسية أولاً.':'')+' · الحالة: '+(q.on?'مفعّل':'متوقف')};
+ ['r_on','r_p','r_s','r_snd','r_w'].forEach(i=>$('#'+i).onchange=save);$('#r_e').onchange=()=>{LS.set('remL',Date.now());save()};
+ $('#r_w').addEventListener('change',e=>rwake(e.target.checked).then(ok=>{if(e.target.checked&&!ok)toast('المتصفح لا يدعم منع إطفاء الشاشة')}));
+ $('#r_perm').onclick=async()=>{if(!window.Notification){toast('غير مدعوم');return}await Notification.requestPermission();st()};
+ $('#r_test').onclick=()=>rnote('تجربة: يا عم صلّ على النبي ﷺ','هكذا سيظهر التذكير',true);st()};
+
 };
