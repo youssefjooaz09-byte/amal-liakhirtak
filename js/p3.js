@@ -175,4 +175,5 @@ Pages.quiz=async(p)=>{const Q=await needQ();await loadScript('data/juz.js','JUZ'
  $('#qs').onclick=()=>{const c=$('#qc').value,l=$('#ql').value;const pool=BANK.filter(b=>(c==='الكل'||b.cat===c)&&(!l||b.l===l));if(pool.length<4){toast('عدد الأسئلة غير كافٍ');return}const qs=pick(pool,Math.random);LS.set('qprev',qs.map(x=>x.id));run(qs,c)};
  $('#qd').onclick=()=>{const r=seeded('amal'+today());const pool=BANK.slice().sort((x,y)=>x.id<y.id?-1:1);const a=pool.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(r()*(k+1));[a[k],a[j]]=[a[j],a[k]]}run(a.slice(0,10),'تحدي اليوم '+today())}};
 if(window.AmalExtra9)window.AmalExtra9(API);
+if(window.AmalExtra11)window.AmalExtra11(API);
 };
