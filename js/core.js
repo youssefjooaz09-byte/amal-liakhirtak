@@ -46,7 +46,7 @@ document.body.insertAdjacentHTML('afterbegin',`
 <footer id="foot"><div style="font-family:Amiri,serif;font-size:1.15rem;color:var(--gold2);margin:10px 0">هذا العمل صنع لوجه الله وابتغاء مرضاته ولا تنسونا من صالح دعائكم</div><div>إعداد: يوسف راضي</div><div class="muted" style="margin-top:8px">© اعمل لآخرتك — النص القرآني: مصحف المدينة (رواية حفص) عبر Al Quran Cloud، التفسير: التفسير الميسر (مجمع الملك فهد). التلاوات تُبثّ مباشرة من mp3quran.net. الأحاديث: Hadith API (sunnah.com). الأذكار: حصن المسلم.</div></footer>
 <div id="toast"></div><div id="queue"></div>
 <div id="player"><div class="in"><div class="art">🕌</div><div class="meta"><b id="pTitle">اختر سورة للاستماع</b><span id="pSub">—</span></div>
-<div class="ctl"><button class="btn" id="pPrev" title="السورة السابقة">⏮</button><button class="btn gold" id="pPlay" title="تشغيل/إيقاف">▶</button><button class="btn" id="pNext" title="السورة التالية">⏭</button><button class="btn" id="pRestart" title="من البداية">↺</button><button class="btn" id="pRep" title="وضع التشغيل: متتابع، تكرار السورة، تكرار الكل">🔁</button></div>
+<div class="ctl"><button class="btn" id="pPrev" title="السورة السابقة">⏮</button><button class="btn gold" id="pPlay" title="تشغيل/إيقاف">▶</button><button class="btn" id="pNext" title="السورة التالية">⏭</button><button class="btn" id="pRestart" title="من البداية">↺</button><button class="btn" id="pDl" title="تنزيل هذه السورة بصوت القارئ إلى جهازك">⬇ تنزيل</button><button class="btn" id="pRep" title="وضع التشغيل: متتابع، تكرار السورة، تكرار الكل">🔁</button></div>
 <div class="prog"><span id="pCur">0:00</span><input type="range" id="pSeek" min="0" max="1000" value="0"><span id="pDur">0:00</span></div>
 <div class="ctl"><span>🔊</span><input class="vol" type="range" id="pVol" min="0" max="1" step=".05" value="1"><select class="field" id="pRate" style="min-width:0;padding:4px 6px"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option><option>2</option></select><button class="btn" id="pList">☰ القائمة</button></div></div></div>`);
 const app=$('#app');
@@ -66,6 +66,20 @@ async function route(href,push){
 document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||a.target||e.ctrlKey||e.metaKey||e.shiftKey)return;const h=a.getAttribute('href');if(/^(https?:|mailto:|#)/.test(h))return;if(!/\.html/.test(h))return;e.preventDefault();route(h,true)});
 addEventListener('popstate',()=>route(location.href,false));
 const crumbs=a=>`<div class="crumbs"><a href="index.html">الرئيسية</a>${a.map(x=>' › '+(x[1]?`<a href="${x[1]}">${x[0]}</a>`:x[0])).join('')}</div>`;
+
+/* ---------- download surah audio straight from the official source (not hosted by us) ---------- */
+let dlBusy=false;
+async function dlAudio(u,name){if(dlBusy){toast('تنزيل آخر جارٍ، انتظر انتهاءه');return}dlBusy=true;
+ const safe=name.replace(/[\\/:*?"<>|]+/g,' ').trim()+'.mp3';
+ try{toast('بدأ التنزيل من المصدر… قد يستغرق وقتًا حسب حجم السورة');
+  const r=await fetch(u);if(!r.ok)throw new Error('http '+r.status);
+  const len=+r.headers.get('content-length')||0;let blob;
+  if(r.body&&r.body.getReader&&len){const rd=r.body.getReader(),ch=[];let got=0,last=0;for(;;){const{done,value}=await rd.read();if(done)break;ch.push(value);got+=value.length;const pc=Math.floor(got/len*100);if(pc>=last+25){last=pc;toast('تم تنزيل '+AR(pc)+'٪')}}blob=new Blob(ch,{type:'audio/mpeg'})}
+  else blob=await r.blob();
+  const a=document.createElement('a'),bu=URL.createObjectURL(new Blob([blob],{type:'audio/mpeg'}));a.href=bu;a.download=safe;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(bu),60000);toast('تم التنزيل: '+safe+' ✓')}
+ catch(e){toast('تعذر التنزيل المباشر داخل الموقع، سيُفتح رابط الملف من المصدر. اضغط مطولًا أو من قائمة المتصفح اختر حفظ.');window.open(u,'_blank','noopener')}
+ finally{dlBusy=false}}
+window.dlAudio=dlAudio;
 /* ---------- audio ---------- */
 const au=new Audio();au.preload='none';
 const P={rec:LS.get('reciter','yasser-dosari'),s:LS.get('lastSurah',1),rep:LS.get('rep',0),q:null,R:null};
@@ -100,6 +114,7 @@ $('#queue').onclick=e=>{const d=e.target.closest('[data-s]');if(d)playSurah(+d.d
 $('#pList').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r});drawQueue();const q=$('#queue');q.style.display=q.style.display==='block'?'none':'block'};
 $('#pPlay').onclick=()=>{if(au.src&&!P.tm&&RQC[P.rec]&&au.currentTime<1&&au.paused){playSurah(P.s,P.rec);return}if(!au.src){playSurah(P.s,P.rec);return}au.paused?au.play().catch(()=>toast('تعذر التشغيل')):au.pause()};
 $('#pNext').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r});step(1)};$('#pPrev').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r});step(-1)};
+$('#pDl').onclick=()=>{const r=recOf(P.rec);if(!r||!P.q){toast('اختر قارئًا وسورة أولًا');return}if(!r.available.includes(P.s)){toast('هذه السورة غير متوفرة لهذا القارئ');return}dlAudio(url(r,P.s),r.name+' - سورة '+P.q[P.s-1].name)};
 $('#pRestart').onclick=()=>{if(au.src){au.currentTime=0;au.play()}else playSurah(P.s,P.rec)};
 $('#pRep').onclick=()=>{P.rep=(P.rep+1)%3;LS.set('rep',P.rep);meta();$('#pRep').textContent='التشغيل: '+['متتابع','تكرار سورة','تكرار الكل'][P.rep]};
 $('#pSeek').oninput=e=>{if(isFinite(au.duration))au.currentTime=au.duration*e.target.value/1000};
