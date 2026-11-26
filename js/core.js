@@ -27,7 +27,7 @@ document.body.insertAdjacentHTML('afterbegin',`
 <footer id="foot"><div style="font-family:Amiri,serif;font-size:1.15rem;color:var(--gold2);margin:10px 0">هذا العمل صنع لوجه الله وابتغاء مرضاته ولا تنسونا من صالح دعائكم</div><div>إعداد: يوسف راضي</div><div class="muted" style="margin-top:8px">© اعمل لآخرتك — النص القرآني: مصحف المدينة (رواية حفص) عبر Al Quran Cloud، التفسير: التفسير الميسر (مجمع الملك فهد). التلاوات تُبثّ مباشرة من mp3quran.net. الأحاديث: Hadith API (sunnah.com). الأذكار: حصن المسلم.</div></footer>
 <div id="toast"></div><div id="queue"></div>
 <div id="player"><div class="in"><div class="art">🕌</div><div class="meta"><b id="pTitle">اختر سورة للاستماع</b><span id="pSub">—</span></div>
-<div class="ctl"><button class="btn" id="pPrev" title="السورة السابقة">⏮</button><button class="btn gold" id="pPlay" title="تشغيل/إيقاف">▶</button><button class="btn" id="pNext" title="السورة التالية">⏭</button><button class="btn" id="pRestart" title="من البداية">↺</button><button class="btn" id="pRep" title="التكرار">🔁 ✕</button></div>
+<div class="ctl"><button class="btn" id="pPrev" title="السورة السابقة">⏮</button><button class="btn gold" id="pPlay" title="تشغيل/إيقاف">▶</button><button class="btn" id="pNext" title="السورة التالية">⏭</button><button class="btn" id="pRestart" title="من البداية">↺</button><button class="btn" id="pRep" title="وضع التشغيل: متتابع، تكرار السورة، تكرار الكل">🔁</button></div>
 <div class="prog"><span id="pCur">0:00</span><input type="range" id="pSeek" min="0" max="1000" value="0"><span id="pDur">0:00</span></div>
 <div class="ctl"><span>🔊</span><input class="vol" type="range" id="pVol" min="0" max="1" step=".05" value="1"><select class="field" id="pRate" style="min-width:0;padding:4px 6px"><option>0.75</option><option selected>1</option><option>1.25</option><option>1.5</option><option>2</option></select><button class="btn" id="pList">☰ القائمة</button></div></div></div>`);
 const app=$('#app');
@@ -74,7 +74,7 @@ async function playSurah(s,key,start){if(au._rs){au.removeEventListener('loadedm
  const h=LS.get('hist',[]);h.unshift({t:'listen',s,r:r.key,at:Date.now()});LS.set('hist',h.slice(0,50));
  meta();drawQueue();document.dispatchEvent(new CustomEvent('amal-play'));
 }
-function meta(){if(!P.q||!P.R)return;const r=recOf(P.rec);$('#pTitle').textContent='سورة '+P.q[P.s-1].name;$('#pSub').textContent=r?r.name:'';$('#pRep').textContent='تكرار: '+['✕','سورة','الكل'][P.rep]}
+function meta(){if(!P.q||!P.R)return;const r=recOf(P.rec);$('#pTitle').textContent='سورة '+P.q[P.s-1].name;$('#pSub').textContent=r?r.name:'';$('#pRep').textContent='التشغيل: '+['متتابع','تكرار سورة','تكرار الكل'][P.rep]}
 function step(d){if(!P.R)return;const r=recOf(P.rec),av=r.available,i=av.indexOf(P.s),n=av[i+d];if(n)playSurah(n,P.rec);else if(P.rep===2||(d>0&&P.rep===2))playSurah(av[d>0?0:av.length-1],P.rec);else toast(d>0?'هذه آخر سورة متاحة':'هذه أول سورة متاحة')}
 function drawQueue(){if(!P.R||!P.q)return;const r=recOf(P.rec);$('#queue').innerHTML=r.available.map(s=>`<div data-s="${s}" class="${s===P.s?'now':''}">${AR(s)}. ${P.q[s-1].name}</div>`).join('')}
 $('#queue').onclick=e=>{const d=e.target.closest('[data-s]');if(d)playSurah(+d.dataset.s,P.rec)};
@@ -82,13 +82,13 @@ $('#pList').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=
 $('#pPlay').onclick=()=>{if(au.src&&!P.tm&&RQC[P.rec]&&au.currentTime<1&&au.paused){playSurah(P.s,P.rec);return}if(!au.src){playSurah(P.s,P.rec);return}au.paused?au.play().catch(()=>toast('تعذر التشغيل')):au.pause()};
 $('#pNext').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r});step(1)};$('#pPrev').onclick=async()=>{await Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r});step(-1)};
 $('#pRestart').onclick=()=>{if(au.src){au.currentTime=0;au.play()}else playSurah(P.s,P.rec)};
-$('#pRep').onclick=()=>{P.rep=(P.rep+1)%3;LS.set('rep',P.rep);meta();$('#pRep').textContent='تكرار: '+['✕','سورة','الكل'][P.rep]};
+$('#pRep').onclick=()=>{P.rep=(P.rep+1)%3;LS.set('rep',P.rep);meta();$('#pRep').textContent='التشغيل: '+['متتابع','تكرار سورة','تكرار الكل'][P.rep]};
 $('#pSeek').oninput=e=>{if(isFinite(au.duration))au.currentTime=au.duration*e.target.value/1000};
 $('#pVol').value=LS.get('vol',1);au.volume=+$('#pVol').value;$('#pVol').oninput=e=>{au.volume=+e.target.value;LS.set('vol',au.volume)};
 $('#pRate').onchange=e=>au.playbackRate=+e.target.value;
 au.onplay=()=>$('#pPlay').textContent='⏸';au.onpause=()=>$('#pPlay').textContent='▶';
 au.ontimeupdate=()=>{hlUpdate();$('#pCur').textContent=fmt(au.currentTime);$('#pDur').textContent=fmt(au.duration);if(isFinite(au.duration))$('#pSeek').value=au.currentTime/au.duration*1000;if(Math.floor(au.currentTime)%5===0)LS.set('lastTime',{s:P.s,r:P.rec,t:au.currentTime})};
-au.onended=()=>{hlClear();if(P.rep===1){au.currentTime=0;au.play();return}if(P.rep===2||recOf(P.rec).available.includes(P.s+1))step(1)};
+au.onended=()=>{hlClear();if(P.rep===1){au.currentTime=0;au.play();return}const av=recOf(P.rec).available,nx=av.find(v=>v>P.s);if(nx){toast('الانتقال تلقائيًا إلى سورة '+P.q[nx-1].name);playSurah(nx,P.rec)}else if(P.rep===2&&av.length)playSurah(av[0],P.rec)};
 au.onerror=()=>{if(au.src)toast('تعذر تحميل الملف الصوتي لهذه السورة. جرّب قارئًا آخر أو أعد المحاولة.')};
 Promise.all([needQ(),needR()]).then(([q,r])=>{P.q=q;P.R=r;const lt=LS.get('lastTime',null);if(!recOf(P.rec))P.rec='yasser-dosari';const rr=recOf(P.rec);if(rr&&rr.available.includes(P.s)){au.src=url(rr,P.s);if(lt&&lt.s===P.s&&lt.r===P.rec)au._rs=()=>{au.currentTime=lt.t};au.addEventListener('loadedmetadata',au._rs,{once:true})}meta();document.dispatchEvent(new CustomEvent('amal-ready'))}).catch(()=>{});
 /* ---------- search ---------- */
