@@ -258,8 +258,10 @@ const rplay=()=>{let b=document.getElementById('remclip');if(b)b.remove();b=docu
 const rnote=async(title,body,sound)=>{try{toast(title)}catch(e){}
  if(window.Notification&&Notification.permission==='granted'){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification(title,{body,tag:'amal-rem',icon:'img/icon-192.png',badge:'img/icon-192.png',lang:'ar',dir:'rtl',renotify:true,data:{url:'remind.html'}})}catch(e){try{new Notification(title,{body,icon:'img/icon-192.png'})}catch(_){}}}
  if(sound&&rget().snd)rplay()};
-const rtick=async()=>{const s=rget();if(!s.on)return;const now=Date.now(),fired=LS.get('remF',{}),today=new Date().toDateString();
- if(fired.k!==today){fired.k=today;fired.p={}}
+const rtick=async()=>{const s=rget(),az=LS.get('azrem',null);if(!s.on&&!(az&&az.on))return;const now=Date.now(),fired=LS.get('remF',{}),today=new Date().toDateString();
+ if(fired.k!==today){fired.k=today;fired.p={};fired.az={}}
+ if(az&&az.on){fired.az=fired.az||{};for(const [id,tm,ttl] of [['m',az.m||'05:30','أذكار الصباح'],['e',az.e||'17:30','أذكار المساء']]){const [h,m]=tm.split(':').map(Number),t=new Date();t.setHours(h,m,0,0);const dt=now-t.getTime();if(dt>=0&&dt<60*60000&&!fired.az[id]){fired.az[id]=1;LS.set('remF',fired);await rnote('حان وقت '+ttl,'افتح صفحة الأذكار وابدأ',false)}}}
+ if(!s.on){LS.set('remF',fired);return}
  if(s.prayer){let T;try{T=await rtimes()}catch(e){T=null}
   if(T)for(const [e,n] of RP){const [h,m]=T[e].split(':').map(Number),t=new Date();t.setHours(h,m,0,0);const dt=now-t.getTime();
    if(dt>=0&&dt<15*60000&&!fired.p[e]){fired.p[e]=1;LS.set('remF',fired);await rnote('حان الآن وقت صلاة '+n,'قم إلى الصلاة. '+AR(h12x(T[e])),false)}}}

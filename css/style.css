@@ -40,7 +40,7 @@ a.card{display:block;color:var(--text)!important}a.card:hover{transform:translat
 .num span{transform:rotate(-45deg);font-size:.85rem}
 .ayahbox{text-align:center;padding:26px}.ayahbox .qt{font-family:'Amiri Quran','Amiri',serif;font-size:1.9rem;line-height:2.4}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
-.reader{font-family:'Amiri Quran','Amiri',serif;font-size:var(--fs,2rem);line-height:2.6;text-align:justify;padding:24px}
+.reader{font-family:'Amiri Quran','Amiri',serif;font-size:calc(var(--fs,2rem) / var(--ts,1));line-height:2.6;text-align:justify;padding:24px}
 .reader .bism{text-align:center;color:var(--gold2);display:block;margin-bottom:10px}
 .ay{padding:2px 4px;border-radius:10px;cursor:pointer;transition:background .2s}.ay:hover{background:rgba(201,165,75,.1)}
 .ay.cur{background:rgba(110,193,228,.18)}.ay.hit{background:rgba(201,165,75,.28)}
@@ -140,3 +140,8 @@ html,body{overflow-x:clip}
  .rdw{max-height:70vh}
 }
 @media(max-width:800px){#mq,#lq,#iq,#sq{flex:1 1 100%!important}}
+
+html[data-rf] .reader,html[data-rf] [style*="Amiri"],html[data-rf] .p9q{font-family:var(--rf)!important}
+html[data-lh] .reader,html[data-lh] [style*="Amiri"],html[data-lh] .p9q{line-height:var(--lh)!important}
+html[data-rm] *,html[data-rm] *::before,html[data-rm] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.setc .toolbar{justify-content:space-between;flex-wrap:wrap;gap:8px;margin:8px 0}.setc .toolbar label{flex:1 1 55%}.setc .field{max-width:100%}.setc h3{margin:0 0 6px}

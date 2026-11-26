@@ -65,6 +65,26 @@ Pages.settings=async()=>{const R=await loadScript('data/reciters.js','RECITERS')
  <div class="toolbar"><label>القارئ الافتراضي</label><select class="field" id="str">${rl.map(r=>`<option value="${esc(r.key)}">${esc(r.name)}</option>`).join('')}</select></div>
  <div class="toolbar"><label>طريقة حساب المواقيت</label><select class="field" id="stp">${METHODS.map(m=>`<option value="${m[0]}">${m[1]}</option>`).join('')}</select></div></div>
  <div class="toolbar"><label>اللغة</label><select class="field" id="stl"><option value="ar">العربية</option><option value="en">English</option></select></div>
+ <div class="card setc"><h3>القراءة والخط</h3>
+ <div class="toolbar"><label>حجم الخط في كل الموقع (الأحاديث والقصص والأذكار...)</label><input type="range" id="ts_z" min="0.9" max="1.4" step="0.05"><span id="ts_zv" class="muted"></span></div>
+ <div class="toolbar"><label>نوع خط النص (القرآن والأحاديث والقصص)</label><select class="field" id="ts_f"><option value="">الافتراضي</option><option value="amiri">أميري</option><option value="sch">شهرزاد الجديد (Scheherazade)</option><option value="naskh">نسخ (Noto Naskh)</option></select></div>
+ <div class="toolbar"><label>تباعد الأسطر</label><select class="field" id="ts_l"><option value="">الافتراضي</option><option value="1.8">ضيّق</option><option value="2.4">متوسط</option><option value="3">واسع</option></select></div>
+ <div class="muted" id="ts_pv" style="font-family:'Amiri',serif;font-size:1.4rem;line-height:2.2;border:1px dashed var(--cardb);border-radius:10px;padding:8px">إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى</div>
+ <div class="toolbar"><label>تقليل الحركة والانتقالات</label><input type="checkbox" id="ts_m"></div>
+ <div class="toolbar"><label>إبقاء الشاشة مضاءة أثناء القراءة أو تشغيل التلاوة (إن دعمه المتصفح)</label><input type="checkbox" id="ts_k"></div></div>
+ <div class="card setc"><h3>التلاوة</h3>
+ <div class="toolbar"><label>الانتقال تلقائيًا إلى السورة التالية عند انتهاء السورة</label><input type="checkbox" id="ts_a"></div>
+ <div class="toolbar"><label>وضع التشغيل الافتراضي</label><select class="field" id="ts_r"><option value="0">متتابع</option><option value="1">تكرار السورة</option><option value="2">تكرار الكل</option></select></div>
+ <div class="toolbar"><label>سرعة التشغيل الافتراضية</label><select class="field" id="ts_s"><option>0.75</option><option>1</option><option>1.25</option><option>1.5</option><option>2</option></select></div></div>
+ <div class="card setc"><h3>التذكيرات</h3><div class="muted">تعمل التذكيرات والموقع أو التطبيق مفتوح فقط (الموقع بلا خادم). التفاصيل الكاملة والحدود في <a href="remind.html">صفحة التذكيرات</a>.</div>
+ <div class="toolbar"><label>تشغيل التذكيرات (الصلاة والصلاة على النبي)</label><input type="checkbox" id="ts_ron"></div>
+ <div class="toolbar"><label>تذكير بأذكار الصباح والمساء</label><input type="checkbox" id="ts_aon"></div>
+ <div class="toolbar"><label>وقت أذكار الصباح</label><input type="time" class="field" id="ts_am"></div>
+ <div class="toolbar"><label>وقت أذكار المساء</label><input type="time" class="field" id="ts_ae"></div>
+ <div class="toolbar"><button class="btn gold" id="ts_perm">السماح بالإشعارات</button><span class="muted" id="ts_ps"></span></div></div>
+ <div class="card setc"><h3>المتابعة</h3>
+ <div class="toolbar"><label>فتح آخر موضع قراءة عند تشغيل الموقع بدل الصفحة الرئيسية</label><input type="checkbox" id="ts_res"></div>
+ <div class="toolbar"><button class="btn" id="ts_forget">نسيان موضع القراءة والتلاوة</button></div></div>
  <div class="card"><b>العمل بدون إنترنت</b><p class="muted">يحفظ الموقع في متصفحك: الصفحات والقرآن والتفسير الميسر والأذكار والأسماء الحسنى وقصص الأنبياء والأربعون النووية. الأحاديث الكبرى (حوالي ٤٠ ميجا) اختيارية. الصوت وبقية التفاسير والمواقيت والصور تحتاج إنترنت. يعمل عبر Live Server أو أي خادم محلي.</p><button class="btn" id="off1">تنزيل الأساسيات</button> <button class="btn" id="off2">تنزيل كل الأحاديث (٤٠ ميجا)</button> <span class="muted" id="offs"></span></div>
  <div class="card"><b>بياناتك</b><p class="muted">كل الإعدادات والمفضلة وتقدمك محفوظة في متصفحك فقط (localStorage) ولا تُرسل لأي خادم.</p><button class="btn" id="stx">تصدير بياناتي (ملف JSON)</button> <button class="btn" id="std" style="color:#ff9b9b">مسح كل بياناتي</button></div>`;
  $('#stm').value=LS.get('theme','dark');$('#stm').onchange=e=>{LS.set('theme',e.target.value);document.body.classList.toggle('light',e.target.value==='light');const b=$('#theme');if(b)b.textContent=e.target.value==='light'?'🌙':'☀️'};
@@ -73,8 +93,26 @@ Pages.settings=async()=>{const R=await loadScript('data/reciters.js','RECITERS')
  $('#stp').value=LS.get('pmeth',5);$('#stp').onchange=e=>LS.set('pmeth',+e.target.value);
  $('#stl').value=(window.AmalLang?AmalLang.get():'ar');$('#stl').onchange=e=>AmalLang.set(e.target.value);
  const dl=async(urls)=>{const st=$('#offs');if(!('caches' in window)){st.textContent='المتصفح لا يدعم التخزين';return}let ok=0;for(const u of urls){try{const r=await fetch(u);if(r.ok){const c=await caches.open('amal-v10');await c.put(u,r);ok++}}catch(e){}st.textContent=AR(ok)+' / '+AR(urls.length)}st.textContent=AR(ok)+' من '+AR(urls.length)+' ملف تم تنزيله'+(ok<urls.length?' (بعضها فشل، أعد المحاولة)':'')};
- $('#off1').onclick=()=>dl(['index.html','quran.html','surah.html','hadith.html','azkar.html','duas.html','quiz.html','tafsir.html','prophets.html','qisas.html','seerah.html','companions.html','fiqh.html','kids.html','newmuslim.html','library.html','names-of-allah.html','qibla.html','salah.html','hijri.html','favorites.html','settings.html','search.html','reciters.html','css/style.css','js/core.js','js/p3.js','js/p4.js','js/p5.js','js/p6.js','js/p7.js','data/mosques.js','videomaker.html','oldschool.html','mujawwad.html','data/old-egyptian.js','js/i18n.js','wallpapers.html','scholars.html','contact.html','report.html','data/scholars.js','data/quran.js','data/juz.js','data/tafsir-muyassar.js','data/adhkar.js','data/names.js','data/prophets.js','data/qisas.js','data/reciters.js','img/hero.jpg','data/hadith-index.js','data/hadith/nawawi-1.js','data/hadith/qudsi-1.js']);
+ $('#off1').onclick=()=>dl(['index.html','quran.html','surah.html','hadith.html','azkar.html','duas.html','quiz.html','tafsir.html','prophets.html','qisas.html','seerah.html','companions.html','fiqh.html','kids.html','newmuslim.html','library.html','names-of-allah.html','qibla.html','salah.html','hijri.html','favorites.html','settings.html','search.html','reciters.html','css/style.css','js/core.js','js/p3.js','js/p4.js','js/p5.js','js/p6.js','js/p7.js','data/mosques.js','videomaker.html','oldschool.html','data/old-egyptian.js','data/mujawwad.js','js/i18n.js','wallpapers.html','scholars.html','contact.html','report.html','data/scholars.js','data/quran.js','data/juz.js','data/tafsir-muyassar.js','data/adhkar.js','data/names.js','data/prophets.js','data/qisas.js','data/reciters.js','img/hero.jpg','data/hadith-index.js','data/hadith/nawawi-1.js','data/hadith/qudsi-1.js']);
  $('#off2').onclick=async()=>{const HI=await loadScript('data/hadith-index.js','HINDEX');const L=[];Object.keys(HI).forEach(c=>HI[c].forEach(b=>L.push(`data/hadith/${c}-${b.b}.js`)));dl(L)};
+
+ {const g=(k,d)=>LS.get(k,d),pv=()=>{const e=$('#ts_pv'),h=document.documentElement;if(h.dataset.rf)e.style.fontFamily=getComputedStyle(h).getPropertyValue('--rf');else e.style.fontFamily="'Amiri',serif"};
+ $('#ts_z').value=g('tsz',1);$('#ts_zv').textContent=AR(Math.round($('#ts_z').value*100))+'٪';$('#ts_z').oninput=e=>{LS.set('tsz',+e.target.value);$('#ts_zv').textContent=AR(Math.round(e.target.value*100))+'٪';applyPrefs()};
+ $('#ts_f').value=g('rfont','');$('#ts_f').onchange=e=>{LS.set('rfont',e.target.value);applyPrefs();pv()};
+ $('#ts_l').value=g('rlh','');$('#ts_l').onchange=e=>{LS.set('rlh',e.target.value);applyPrefs()};
+ {const rm=g('rmot',null);$('#ts_m').checked=rm===null?matchMedia('(prefers-reduced-motion: reduce)').matches:rm}$('#ts_m').onchange=e=>{LS.set('rmot',e.target.checked);applyPrefs()};
+ $('#ts_k').checked=g('kawake',false);$('#ts_k').onchange=e=>{LS.set('kawake',e.target.checked);if(e.target.checked&&!('wakeLock' in navigator))toast('هذا المتصفح لا يدعم إبقاء الشاشة مضاءة');kaSync()};
+ $('#ts_a').checked=g('anext',true);$('#ts_a').onchange=e=>LS.set('anext',e.target.checked);
+ $('#ts_r').value=g('rep',0);$('#ts_r').onchange=e=>{LS.set('rep',+e.target.value);if(window.__amal)window.__amal.P.rep=+e.target.value;toast('تم الحفظ')};
+ $('#ts_s').value=String(g('prate',1));$('#ts_s').onchange=e=>{LS.set('prate',+e.target.value);const pr=$('#pRate');if(pr){pr.value=e.target.value;pr.onchange&&pr.onchange({target:pr})}toast('تم الحفظ')};
+ const RB={on:false,prayer:true,sal:true,every:30,snd:true,wake:false},rs=()=>({...RB,...g('rem',{})}),az=()=>({on:false,m:'05:30',e:'17:30',...g('azrem',{})});
+ $('#ts_ron').checked=rs().on;$('#ts_ron').onchange=e=>{LS.set('rem',{...rs(),on:e.target.checked});if(e.target.checked&&!g('remL',0))LS.set('remL',Date.now());toast(e.target.checked?'تم تشغيل التذكيرات':'تم إيقاف التذكيرات')};
+ $('#ts_aon').checked=az().on;$('#ts_am').value=az().m;$('#ts_ae').value=az().e;
+ $('#ts_aon').onchange=e=>LS.set('azrem',{...az(),on:e.target.checked});$('#ts_am').onchange=e=>LS.set('azrem',{...az(),m:e.target.value||'05:30'});$('#ts_ae').onchange=e=>LS.set('azrem',{...az(),e:e.target.value||'17:30'});
+ const ps=()=>{$('#ts_ps').textContent=window.Notification?'إذن الإشعارات: '+({granted:'مسموح',denied:'مرفوض (غيّره من إعدادات المتصفح)',default:'لم يُطلب بعد'}[Notification.permission]):'المتصفح لا يدعم الإشعارات'};ps();
+ $('#ts_perm').onclick=async()=>{if(!window.Notification){toast('غير مدعوم');return}await Notification.requestPermission();ps()};
+ $('#ts_res').checked=g('resume',false);$('#ts_res').onchange=e=>LS.set('resume',e.target.checked);
+ $('#ts_forget').onclick=()=>{['last','lastSurah','lastTime'].forEach(k=>localStorage.removeItem('amal_'+k));toast('تم نسيان موضع القراءة والتلاوة')};pv()}
  $('#stx').onclick=()=>{const o={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('amal_'))o[k]=localStorage.getItem(k)}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(o,null,1)],{type:'application/json'}));a.download='amal-data.json';a.click()};
  $('#std').onclick=()=>{if(confirm('هل تريد مسح كل المفضلة والإعدادات والتقدم؟')){Object.keys(localStorage).filter(k=>k.startsWith('amal_')).forEach(k=>localStorage.removeItem(k));toast('تم المسح');API.route('settings.html',false)}}};
 
