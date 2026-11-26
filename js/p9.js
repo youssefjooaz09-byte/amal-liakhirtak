@@ -246,16 +246,15 @@ Pages.sheikh=async(p)=>{const V=await SD(),x=V.find(y=>y.v===p.get('v'));if(!x){
 /* ---------- prayer + salawat reminders (runs only while the site is open) ---------- */
 const RDEF={on:false,prayer:true,sal:true,every:30,snd:true,wake:false};
 const RP=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
-const RCLIP='6MI1SZtoryI';
 const rget=()=>({...RDEF,...LS.get('rem',{})});
 const rtimes=async()=>{const k=new Date().toDateString(),c=LS.get('remT',null);if(c&&c.k===k&&c.loc===JSON.stringify(LS.get('loc',null)))return c.T;
  const loc=LS.get('loc',{n:'القاهرة',lat:30.0444,lon:31.2357}),meth=LS.get('pmeth',5),d=new Date();
  const r=await fetch(`https://api.aladhan.com/v1/timings/${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}?latitude=${loc.lat}&longitude=${loc.lon}&method=${meth}`);if(!r.ok)throw new Error('http '+r.status);
  const T=(await r.json()).data.timings;const o={};RP.forEach(([e])=>o[e]=String(T[e]).slice(0,5));LS.set('remT',{k,loc:JSON.stringify(LS.get('loc',null)),T:o});return o};
 const rplay=()=>{let b=document.getElementById('remclip');if(b)b.remove();b=document.createElement('div');b.id='remclip';
- b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;width:220px;background:#0b1230;border:1px solid #c9a24b;border-radius:10px;padding:6px;direction:rtl';
- b.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#e8d9a8;margin-bottom:4px"><span>مقطع الشيخ سمير مصطفى</span><button style="background:none;border:0;color:#fff;font-size:1.1rem" aria-label="إغلاق">✕</button></div><iframe src="https://www.youtube-nocookie.com/embed/${RCLIP}?autoplay=1&playsinline=1&rel=0" title="صل على النبي" allow="autoplay; encrypted-media" style="width:100%;height:118px;border:0;border-radius:6px"></iframe>`;
- document.body.appendChild(b);b.querySelector('button').onclick=()=>b.remove();setTimeout(()=>{if(b.isConnected)b.remove()},30000)};
+ b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;width:230px;background:#0b1230;border:1px solid #c9a24b;border-radius:10px;padding:6px;direction:rtl';
+ b.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#e8d9a8;margin-bottom:4px"><span>صلّ على النبي ﷺ</span><button style="background:none;border:0;color:#fff;font-size:1.1rem" aria-label="إغلاق">✕</button></div><audio controls preload="auto" src="audio/salawat.mp3" style="width:100%"></audio>';
+ document.body.appendChild(b);const au=b.querySelector('audio');au.play().catch(()=>{});au.onended=()=>setTimeout(()=>b.remove(),1500);b.querySelector('button').onclick=()=>{au.pause();b.remove()};setTimeout(()=>{if(b.isConnected)b.remove()},60000)};
 const rnote=async(title,body,sound)=>{try{toast(title)}catch(e){}
  if(window.Notification&&Notification.permission==='granted'){try{const reg=await navigator.serviceWorker.ready;await reg.showNotification(title,{body,tag:'amal-rem',icon:'img/icon-192.png',badge:'img/icon-192.png',lang:'ar',dir:'rtl',renotify:true,data:{url:'remind.html'}})}catch(e){try{new Notification(title,{body,icon:'img/icon-192.png'})}catch(_){}}}
  if(sound&&rget().snd)rplay()};
@@ -264,7 +263,7 @@ const rtick=async()=>{const s=rget();if(!s.on)return;const now=Date.now(),fired=
  if(s.prayer){let T;try{T=await rtimes()}catch(e){T=null}
   if(T)for(const [e,n] of RP){const [h,m]=T[e].split(':').map(Number),t=new Date();t.setHours(h,m,0,0);const dt=now-t.getTime();
    if(dt>=0&&dt<15*60000&&!fired.p[e]){fired.p[e]=1;LS.set('remF',fired);await rnote('حان الآن وقت صلاة '+n,'قم إلى الصلاة. '+AR(h12x(T[e])),false)}}}
- if(s.sal){const last=LS.get('remL',0);if(!last){LS.set('remL',now)}else if(now-last>=s.every*60000){LS.set('remL',now);await rnote('يا عم صلّ على النبي ﷺ','اللهم صلّ وسلّم على نبينا محمد',true)}}
+ if(s.sal){const last=LS.get('remL',0);if(!last){LS.set('remL',now)}else if(now-last>=30*60000){LS.set('remL',now);await rnote('يا عم صلّ على النبي ﷺ','اللهم صلّ وسلّم على نبينا محمد',true)}}
  LS.set('remF',fired)};
 const h12x=t=>{let [h,m]=t.split(':').map(Number);const ap=h>=12?'م':'ص';h=h%12||12;return h+':'+String(m).padStart(2,'0')+' '+ap};
 let wl=null;const rwake=async on=>{try{if(on&&'wakeLock' in navigator){wl=await navigator.wakeLock.request('screen');return true}if(wl){await wl.release();wl=null}}catch(e){}return false};
@@ -275,15 +274,15 @@ Pages.remind=async()=>{const s=rget();const perm=window.Notification?Notificatio
  wrapP('تذكير الصلاة والصلاة على النبي','الإعدادات',`<div class="notice"><b>اقرأ هذا أولاً (حدود حقيقية):</b> الموقع ثابت بدون خادم، فالتذكير يعمل <b>فقط والموقع أو التطبيق المثبّت مفتوح</b> (ولو في الخلفية ما دام المتصفح لم يوقفه). إذا أغلقت المتصفح أو التطبيق تماماً فلن يصلك أي إشعار، لأن إشعارات الإغلاق تحتاج خادماً خاصاً غير موجود. على الأندرويد قد يجمّد النظام الصفحة الخلفية بعد وقت لتوفير البطارية. على الآيفون الإشعارات لا تعمل إلا إذا ثبّتّ الموقع على الشاشة الرئيسية (iOS 16.4 فأعلى) وفتحته، والصفحة تتوقف عند قفل الشاشة. للتجربة الأفضل: ثبّت التطبيق، افتحه، فعّل الخيار أدناه لمنع إطفاء الشاشة، واترك الشاشة مفتوحة.</div>
  <div class="card"><label class="p9row"><input type="checkbox" id="r_on" ${s.on?'checked':''}> <b>تشغيل التذكيرات</b></label>
  <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_p" ${s.prayer?'checked':''}> تذكير عند دخول وقت كل صلاة (الفجر، الظهر، العصر، المغرب، العشاء)</label>
- <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_s" ${s.sal?'checked':''}> تذكير بالصلاة على النبي ﷺ كل <select class="field" id="r_e" style="width:auto;display:inline-block">${[10,15,20,30,45,60].map(n=>`<option value="${n}" ${n===s.every?'selected':''}>${AR(n)}</option>`).join('')}</select> دقيقة</label>
- <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_snd" ${s.snd?'checked':''}> تشغيل مقطع الشيخ سمير مصطفى مع تذكير الصلاة على النبي</label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_s" ${s.sal?'checked':''}> تذكير بالصلاة على النبي ﷺ كل ٣٠ دقيقة</label>
+ <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_snd" ${s.snd?'checked':''}> تشغيل المقطع الصوتي مع تذكير الصلاة على النبي</label>
  <label class="p9row" style="margin-top:8px"><input type="checkbox" id="r_w" ${s.wake?'checked':''}> منع إطفاء الشاشة أثناء فتح الصفحة (إن دعمه المتصفح)</label>
  <div class="p9row" style="margin:10px 0"><button class="btn gold" id="r_perm">السماح بالإشعارات</button><button class="btn" id="r_test">تجربة الآن</button></div>
  <div class="muted" id="r_st"></div></div>
- <div class="notice">مواقيت الصلاة من AlAdhan حسب المدينة وطريقة الحساب المختارة في صفحة <a href="salah.html">المواقيت</a> (القاهرة افتراضياً)، وهي مرجع عام قد يختلف دقائق عن مسجدك.<br>الصوت: مقطع قصير (١٣ ثانية) من قناة الشيخ سمير مصطفى الرسمية على يوتيوب، <a href="https://www.youtube.com/watch?v=${RCLIP}" target="_blank" rel="noopener">رابط المقطع</a>، يُشغَّل بمشغّل يوتيوب الرسمي ولا يُنسخ ولا يُصنَّع. عنوانه «صل على النبي»؛ لم أستطع التحقق آلياً من اللفظ الدقيق فيه، فاستمع إليه مرة بزر «تجربة الآن». المتصفح قد يمنع التشغيل التلقائي للصوت قبل أن تتفاعل مع الصفحة، فاضغط تشغيل في المربع الصغير إن لم يبدأ.</div>`);
- const save=()=>{LS.set('rem',{on:$('#r_on').checked,prayer:$('#r_p').checked,sal:$('#r_s').checked,every:+$('#r_e').value,snd:$('#r_snd').checked,wake:$('#r_w').checked});if(rget().on&&!LS.get('remL',0))LS.set('remL',Date.now());st()};
+ <div class="notice">مواقيت الصلاة من AlAdhan حسب المدينة وطريقة الحساب المختارة في صفحة <a href="salah.html">المواقيت</a> (القاهرة افتراضياً)، وهي مرجع عام قد يختلف دقائق عن مسجدك.<br>الصوت: مقطع صوتي قصير (حوالي ٢٢ ثانية) قدّمه صاحب الموقع ورُفع على الموقع نفسه (audio/salawat.mp3). مصدر المقطع الأصلي وصاحب الصوت فيه غير موثّق في الموقع. المتصفح قد يمنع التشغيل التلقائي للصوت قبل أن تتفاعل مع الصفحة، فاضغط تشغيل في المربع الصغير إن لم يبدأ. اضغط «تجربة الآن» لتسمعه.</div>`);
+ const save=()=>{LS.set('rem',{on:$('#r_on').checked,prayer:$('#r_p').checked,sal:$('#r_s').checked,every:30,snd:$('#r_snd').checked,wake:$('#r_w').checked});if(rget().on&&!LS.get('remL',0))LS.set('remL',Date.now());st()};
  const st=()=>{const q=rget();$('#r_st').textContent=(window.Notification?'إذن الإشعارات: '+({granted:'مسموح',denied:'مرفوض (غيّره من إعدادات المتصفح)',default:'لم يُطلب بعد'}[Notification.permission]):'هذا المتصفح لا يدعم الإشعارات، ستظهر رسائل داخل الصفحة فقط.')+(ios&&!stand?' · على الآيفون ثبّت الموقع على الشاشة الرئيسية أولاً.':'')+' · الحالة: '+(q.on?'مفعّل':'متوقف')};
- ['r_on','r_p','r_s','r_snd','r_w'].forEach(i=>$('#'+i).onchange=save);$('#r_e').onchange=()=>{LS.set('remL',Date.now());save()};
+ ['r_on','r_p','r_s','r_snd','r_w'].forEach(i=>$('#'+i).onchange=save);
  $('#r_w').addEventListener('change',e=>rwake(e.target.checked).then(ok=>{if(e.target.checked&&!ok)toast('المتصفح لا يدعم منع إطفاء الشاشة')}));
  $('#r_perm').onclick=async()=>{if(!window.Notification){toast('غير مدعوم');return}await Notification.requestPermission();st()};
  $('#r_test').onclick=()=>rnote('تجربة: يا عم صلّ على النبي ﷺ','هكذا سيظهر التذكير',true);st()};
