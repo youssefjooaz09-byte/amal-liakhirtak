@@ -7,7 +7,7 @@ const css=`<style>
 .p9g label{display:flex;gap:6px;align-items:center;border:1px solid var(--cardb);border-radius:12px;padding:8px 10px;cursor:pointer;background:var(--card);font-size:.9rem}
 .p9g label.on{border-color:var(--gold);background:rgba(226,199,121,.14)}
 .p9bar{height:14px;border-radius:9px;background:rgba(255,255,255,.12);border:1px solid var(--cardb);overflow:hidden}
-.p9bar i{display:block;height:100%;background:linear-gradient(90deg,#5b2a9e,#e2c779)}
+.p9bar i{display:block;height:100%;background:linear-gradient(90deg,#1f6a50,#e2c779)}
 .p9big{font-family:'Reem Kufi','Amiri',serif;font-size:2rem;color:var(--gold2)}
 .p9t{font-family:'Amiri',serif;font-size:1.25rem;line-height:2.1;white-space:pre-wrap}
 .p9q{font-family:'Amiri Quran','Amiri',serif;font-size:1.5rem;line-height:2.4}
@@ -81,13 +81,13 @@ Pages.cards=async(p)=>{const Q=await needQ(),T=await loadScript('data/tafsir-muy
   <div class="p9row"><button class="btn gold" id="cs">مشاركة كصورة</button><button class="btn" id="cc">نسخ النص</button><button class="btn" id="cj">حفظ في مفكرتي</button><a class="btn" href="${c.link}">في سياقه</a></div><br><canvas id="cv" width="1080" height="1350" style="display:none"></canvas><div id="cp"></div>`);
   $$('[data-t]').forEach(b=>b.onclick=()=>{cur=+b.dataset.t;draw()});
   $('#cn').onclick=()=>{off++;C=build();draw()};
-  const txt=`${c.t}\n(${c.src})\n\nموقع اعمل لآخرتك`;
+  const txt=`${c.t}\n(${c.src})\n\nموقع زاد | ZAD`;
   $('#cc').onclick=()=>navigator.clipboard.writeText(txt).then(()=>toast('تم النسخ'));
   $('#cj').onclick=()=>{LS.set('journal',[{id:'j'+Date.now(),type:c.k,text:c.t,src:c.src,ts:Date.now()},...LS.get('journal',[])]);toast('تم الحفظ في مفكرتي')};
   $('#cs').onclick=async()=>{const D=window.AmalDraw;await D.loadFont('Amiri');await D.loadFont('Amiri Quran');await D.loadFont('Reem Kufi');const cv=$('#cv'),x=cv.getContext('2d'),w=1080,h=1350;
-   const gr=x.createLinearGradient(0,0,w,h);gr.addColorStop(0,'#0b1230');gr.addColorStop(.6,'#2d1a5a');gr.addColorStop(1,'#5b2a9e');x.fillStyle=gr;x.fillRect(0,0,w,h);
+   const gr=x.createLinearGradient(0,0,w,h);gr.addColorStop(0,'#0c231c');gr.addColorStop(.6,'#275344');gr.addColorStop(1,'#1f6a50');x.fillStyle=gr;x.fillRect(0,0,w,h);
    x.strokeStyle='#e2c779';x.lineWidth=6;x.strokeRect(30,30,w-60,h-60);x.lineWidth=2;x.strokeRect(48,48,w-96,h-96);
-   x.textAlign='center';x.direction='rtl';x.fillStyle='#e2c779';x.font='56px "Reem Kufi"';x.fillText('اعمل لآخرتك',w/2,150);x.font='36px "Amiri"';x.fillText(c.k,w/2,215);
+   x.textAlign='center';x.direction='rtl';x.fillStyle='#e2c779';x.font='56px "Reem Kufi"';x.fillText('زاد | ZAD',w/2,150);x.font='36px "Amiri"';x.fillText(c.k,w/2,215);
    x.save();x.translate(0,230);const ok=D.drawBlock(x,w,h-480,c.t,{font:c.k==='آية'?'Amiri Quran':'Amiri',color:'#f6f1e6',scale:1});x.restore();
    x.fillStyle='#e2c779';x.font='34px "Amiri"';D.wrap(x,c.src,w-200).forEach((l,i)=>x.fillText(l,w/2,h-190+i*48));
    if(!ok){toast('النص طويل للصورة، استخدم النسخ');return}
@@ -252,7 +252,7 @@ const rtimes=async()=>{const k=new Date().toDateString(),c=LS.get('remT',null);i
  const r=await fetch(`https://api.aladhan.com/v1/timings/${d.getDate()}-${d.getMonth()+1}-${d.getFullYear()}?latitude=${loc.lat}&longitude=${loc.lon}&method=${meth}`);if(!r.ok)throw new Error('http '+r.status);
  const T=(await r.json()).data.timings;const o={};RP.forEach(([e])=>o[e]=String(T[e]).slice(0,5));LS.set('remT',{k,loc:JSON.stringify(LS.get('loc',null)),T:o});return o};
 const rplay=()=>{let b=document.getElementById('remclip');if(b)b.remove();b=document.createElement('div');b.id='remclip';
- b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;width:230px;background:#0b1230;border:1px solid #c9a24b;border-radius:10px;padding:6px;direction:rtl';
+ b.style.cssText='position:fixed;left:8px;bottom:8px;z-index:99999;width:230px;background:#0c231c;border:1px solid #c9a24b;border-radius:10px;padding:6px;direction:rtl';
  b.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#e8d9a8;margin-bottom:4px"><span>صلّ على النبي ﷺ</span><button style="background:none;border:0;color:#fff;font-size:1.1rem" aria-label="إغلاق">✕</button></div><audio controls preload="auto" src="audio/salawat.mp3" style="width:100%"></audio>';
  document.body.appendChild(b);const au=b.querySelector('audio');au.play().catch(()=>{});au.onended=()=>setTimeout(()=>b.remove(),1500);b.querySelector('button').onclick=()=>{au.pause();b.remove()};setTimeout(()=>{if(b.isConnected)b.remove()},60000)};
 const rnote=async(title,body,sound)=>{try{toast(title)}catch(e){}

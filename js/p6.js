@@ -19,7 +19,7 @@ Pages.report=async(p)=>{const Q=await needQ();const t=p.get('t')||'ayah';let ref
  <label>أين وجدت الخطأ؟ (سورة وآية، رقم الحديث، اسم الصفحة)</label><input class="field" id="rr" value="${esc(ref)}" style="width:100%">
  <label>ما الخطأ؟ وما الصحيح مع المصدر إن أمكن</label><textarea class="field" id="rd" rows="5" style="width:100%"></textarea>
  <div class="toolbar"><a class="btn gold" id="rs" href="#" target="_blank" rel="noopener">إرسال عبر واتساب</a><button class="btn" id="rc">نسخ الرسالة</button></div></div>`;
- const msg=()=>`إبلاغ عن خطأ في موقع «اعمل لآخرتك»\nالنوع: ${$('#rt').value}\nالموضع: ${$('#rr').value||'-'}\nالتفاصيل: ${$('#rd').value||'-'}\nالصفحة: ${from||document.referrer||location.href}`;
+ const msg=()=>`إبلاغ عن خطأ في موقع «زاد | ZAD»\nالنوع: ${$('#rt').value}\nالموضع: ${$('#rr').value||'-'}\nالتفاصيل: ${$('#rd').value||'-'}\nالصفحة: ${from||document.referrer||location.href}`;
  const upd=()=>{$('#rs').href=WA+'?text='+encodeURIComponent(msg())};['#rt','#rr','#rd'].forEach(s=>$(s).addEventListener('input',upd));upd();
  $('#rc').onclick=()=>{navigator.clipboard.writeText(msg()).then(()=>toast('تم نسخ الرسالة'),()=>toast('تعذر النسخ'))}};
 /* ---------- scholars ---------- */
@@ -28,7 +28,7 @@ Pages.scholars=async()=>{const S=await loadScript('data/scholars.js','SCHOLARS')
  ${S.map(s=>`<div class="card" style="margin:12px 0"><h3>${esc(s.name)}</h3><div class="muted">المصدر: الذهبي، سير أعلام النبلاء، ويكي مصدر · <a href="${s.url}" target="_blank" rel="noopener">النص الكامل</a>${s.cut?' · مقتطع':''}</div>${s.excerpt.map(t=>`<p style="font-family:Amiri,serif;font-size:1.25rem;line-height:2.2">${esc(t)}</p>`).join('')}<a class="muted" href="report.html?t=info&ref=${encodeURIComponent('سير العلماء - '+s.name)}">إبلاغ عن خطأ</a></div>`).join('')}`};
 /* ---------- wallpapers + share cards (generated in the browser) ---------- */
 const SIZES={m:[1080,1920,'موبايل ١٠٨٠×١٩٢٠'],d:[1920,1080,'كمبيوتر ١٩٢٠×١٠٨٠'],s:[1080,1080,'مربع للمشاركة ١٠٨٠×١٠٨٠']};
-const DESIGNS=[['نجمة ذهبية على كحلي',{a:'#0b1230',b:'#2d1a5a',g:'#c9a54b',txt:'#f6f1e6',p:'star'}],['أقواس بنفسجية',{a:'#1b0f45',b:'#5b2a9e',g:'#e2c779',txt:'#fbf6e9',p:'arch'}],['دوائر ذهبية',{a:'#070c22',b:'#1d1450',g:'#d8b65c',txt:'#f6f1e6',p:'circ'}],['وهج الغروب',{a:'#2a1458',b:'#a0602a',g:'#f0d38a',txt:'#fff8e6',p:'dots'}],['ورق فاتح',{a:'#f7f0de',b:'#eadfc0',g:'#8a6d1f',txt:'#1b1b3a',p:'star'}],['كحلي هادئ',{a:'#0e1a3d',b:'#0e1a3d',g:'#c9a54b',txt:'#f6f1e6',p:'none'}]];
+const DESIGNS=[['نجمة ذهبية على كحلي',{a:'#0c231c',b:'#275344',g:'#c9a54b',txt:'#f6f1e6',p:'star'}],['أقواس بنفسجية',{a:'#122f25',b:'#1f6a50',g:'#e2c779',txt:'#fbf6e9',p:'arch'}],['دوائر ذهبية',{a:'#06150f',b:'#15382c',g:'#d8b65c',txt:'#f6f1e6',p:'circ'}],['وهج الغروب',{a:'#17392d',b:'#a0602a',g:'#f0d38a',txt:'#fff8e6',p:'dots'}],['ورق فاتح',{a:'#f7f0de',b:'#eadfc0',g:'#8a6d1f',txt:'#1b1b3a',p:'star'}],['كحلي هادئ',{a:'#0d2a21',b:'#0d2a21',g:'#c9a54b',txt:'#f6f1e6',p:'none'}]];
 function pattern(c,w,h,d){const ctx=c;ctx.save();ctx.strokeStyle=d.g;ctx.fillStyle=d.g;ctx.globalAlpha=.18;ctx.lineWidth=2;const u=Math.max(w,h)/14;
  if(d.p==='star'){for(let y=0;y<h+u;y+=u)for(let x=0;x<w+u;x+=u){ctx.save();ctx.translate(x,y);for(let k=0;k<2;k++){ctx.rotate(k?Math.PI/4:0);ctx.strokeRect(-u*.32,-u*.32,u*.64,u*.64)}ctx.restore()}}
  else if(d.p==='circ'){for(let y=0;y<h+u;y+=u)for(let x=0;x<w+u;x+=u){ctx.beginPath();ctx.arc(x,y,u*.5,0,7);ctx.stroke();ctx.beginPath();ctx.arc(x,y,u*.25,0,7);ctx.stroke()}}
@@ -43,7 +43,7 @@ async function render(o){await Promise.all([document.fonts.load('48px Amiri'),do
  const rg=x.createRadialGradient(w/2,h*.4,10,w/2,h*.4,Math.max(w,h)*.7);rg.addColorStop(0,'rgba(255,255,255,.10)');rg.addColorStop(1,'rgba(0,0,0,.25)');x.fillStyle=rg;x.fillRect(0,0,w,h);
  pattern(x,w,h,d);x.direction='rtl';x.textAlign='center';x.textBaseline='alphabetic';
  const pad=Math.min(w,h)*.12;let ok=true;
- x.fillStyle=d.g;x.font=`bold ${Math.round(Math.min(w,h)*.035)}px Cairo, Tajawal, sans-serif`;x.fillText('اعمل لآخرتك',w/2,pad*.85);
+ x.fillStyle=d.g;x.font=`bold ${Math.round(Math.min(w,h)*.035)}px Cairo, Tajawal, sans-serif`;x.fillText('زاد | ZAD',w/2,pad*.85);
  if(o.text){const maxW=w-pad*2,maxH=h-pad*2.9;let fs=Math.round(Math.min(w,h)*.07),lines;const fam=o.quran?'"Amiri Quran", Amiri, serif':'Amiri, serif';
   for(;fs>=26;fs-=2){x.font=`${fs}px ${fam}`;lines=wrap(x,o.text,maxW);if(lines.length*fs*1.75<=maxH)break}
   if(fs<26||lines.length*fs*1.75>maxH){ok=false}
@@ -73,6 +73,6 @@ Pages.wallpapers=async(p)=>{const Q=await needQ();
  ['#wt','#wsz','#wd'].forEach(s=>$(s).onchange=()=>{if(s==='#wt')sel();draw()});
  const blob=()=>new Promise(r=>$('#wc').toBlob(r,'image/png'));
  $('#wdl').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='amal-liakhirtak-'+$('#wt').value+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
- $('#wsh').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const f=new File([b],'amal-liakhirtak.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'اعمل لآخرتك'}).catch(()=>{});else toast('المشاركة المباشرة غير متاحة في هذا المتصفح، استخدم زر التنزيل.')};
+ $('#wsh').onclick=async()=>{if(!last||!last.ok){toast('لا توجد صورة صالحة');return}const b=await blob();const f=new File([b],'amal-liakhirtak.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'زاد | ZAD'}).catch(()=>{});else toast('المشاركة المباشرة غير متاحة في هذا المتصفح، استخدم زر التنزيل.')};
  sel();draw()};
 };

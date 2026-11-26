@@ -4,17 +4,17 @@ const old=Pages.library;Pages.sources=old;
 const libCSS=`<style>
 .bk{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
 .bkc{position:relative;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit}
-.cov{aspect-ratio:3/4;border-radius:10px;border:2px solid var(--gold);background:linear-gradient(160deg,#0b1230,#2d1a5a 70%,#5b2a9e);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.cov{aspect-ratio:3/4;border-radius:10px;border:2px solid var(--gold);background:linear-gradient(160deg,#0c231c,#275344 70%,#1f6a50);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:14px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
 .cov:before{content:"";position:absolute;inset:7px;border:1px solid rgba(226,199,121,.55);border-radius:6px;pointer-events:none}
 .cov b{font-family:'Reem Kufi','Amiri',serif;font-size:1.15rem;line-height:1.7;color:#e2c779}
 .cov i{font-style:normal;margin-top:10px;font-size:.78rem;color:#f6f1e6;opacity:.85}
 .cov .o{font-size:1.6rem;color:#c9a54b;margin-bottom:8px}
-.fv{position:absolute;top:8px;left:8px;z-index:2;background:rgba(11,18,48,.8);border:1px solid var(--gold);color:var(--gold2);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem}
+.fv{position:absolute;top:8px;left:8px;z-index:2;background:rgba(12,35,28,.8);border:1px solid var(--gold);color:var(--gold2);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem}
 .rd{display:flex;flex-direction:column;align-items:center;gap:10px}
 .rd canvas{max-width:100%;background:#fff;border-radius:6px;box-shadow:var(--shadow)}
 .rdw{width:100%;overflow:auto;max-height:80vh;text-align:center;border:1px solid var(--cardb);border-radius:10px;padding:8px}
 .im{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
-.mono{width:84px;height:84px;border-radius:50%;margin:0 auto 8px;border:2px solid var(--gold);background:linear-gradient(160deg,#0b1230,#5b2a9e);display:flex;align-items:center;justify-content:center;font-family:'Aref Ruqaa','Amiri',serif;font-size:2.4rem;color:#e2c779}
+.mono{width:84px;height:84px;border-radius:50%;margin:0 auto 8px;border:2px solid var(--gold);background:linear-gradient(160deg,#0c231c,#1f6a50);display:flex;align-items:center;justify-content:center;font-family:'Aref Ruqaa','Amiri',serif;font-size:2.4rem;color:#e2c779}
 </style>`;
 const LIB=()=>loadScript('data/library.js','LIBRARY');
 const fav=()=>LS.get('libfav',[]);
