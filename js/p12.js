@@ -51,16 +51,15 @@ Pages.tasmee=async()=>{const Q=await needQ();const SR=window.SpeechRecognition||
  const words=()=>{const s=surah(),[a,b]=range(),W=[];for(let k=a;k<=b;k++)s.ayahs[k-1].split(/\s+/).filter(Boolean).forEach(w=>{const z=nz(w);if(z)W.push({w,z,ay:k})});return W};
  const render=(txt,final)=>{const W=words(),E=W.map(x=>x.z),S=txt.split(/\s+/).map(nz).filter(Boolean);const R=align(E,S),r=R.res;
   const cnt={ok:0,close:0,bad:0,miss:0};r.forEach((x,i)=>{if(i<R.reached)cnt[x.st]=(cnt[x.st]||0)+1});
-  const hide=$('#thide').checked&&!final;let h='',last=0;
-  W.forEach((x,i)=>{if(x.ay!==last){last=x.ay;h+=`<div class="muted" style="margin-top:8px">الآية ${AR(x.ay)}</div>`}const st=i<R.reached?r[i].st:'todo';
+  const hide=$('#thide').checked&&!final;let h='';
+  W.forEach((x,i)=>{const st=i<R.reached?r[i].st:'todo';const endOfAyah=i===W.length-1||W[i+1].ay!==x.ay;const mk=endOfAyah?` <span class="amk" style="color:var(--gold);white-space:nowrap">\uFD3F${AR(x.ay)}\uFD3E</span>`:'';
    const col={ok:'#1f8f5a',close:'#c98a00',bad:'#d23c3c',miss:'#d27a1c',todo:'inherit'}[st];
    if(st==='todo'&&hide)return;
-   if(hide&&st==='ok'){h+=`<span style="color:${col}">${esc(x.w)}</span> `;return}
-   const tip=st==='bad'?` <small title="سمعنا">(سُمع: ${esc(r[i].h)})</small>`:st==='close'?` <small>(قريبة، تأكد)</small>`:st==='miss'?' <small>(ناقصة)</small>':'';
-   h+=`<span style="color:${col};${st==='bad'||st==='miss'?'text-decoration:underline wavy;':''}${st==='todo'?'opacity:.55':''}">${esc(x.w)}${tip}</span> `});
+   const tip=st==='bad'?` <small>(سُمع: ${esc(r[i].h)})</small>`:st==='close'?' <small>(قريبة، تأكد)</small>':st==='miss'?' <small>(ناقصة)</small>':'';
+   h+=`<span style="color:${col};${st==='bad'||st==='miss'?'text-decoration:underline wavy;':''}${st==='todo'?'opacity:.55':''}">${esc(x.w)}${hide&&st==='ok'?'':tip}</span>${mk} `});
   const ex=R.extra.length?`<div class="notice">كلمات زائدة سُمعت ولا تطابق النص: ${R.extra.map(e=>esc(e.w)).join('، ')}</div>`:'';
   const done=R.reached>=W.length&&!r.some(x=>x.st==='miss'||x.st==='bad'||x.st==='close');
-  $('#tres').innerHTML=`<div class="card" style="margin-top:10px;line-height:2.6;font-size:1.2rem;font-family:Amiri,serif">${h||'<span class="muted">ابدأ القراءة...</span>'}</div>${ex}<div class="muted">وصلت إلى الكلمة ${AR(R.reached)} من ${AR(W.length)} · صحيحة ${AR(cnt.ok)} · قريبة ${AR(cnt.close)} · خاطئة ${AR(cnt.bad)} · ناقصة ${AR(cnt.miss)}${final&&done?' · أتممت المقطع كاملًا بلا أخطاء ظاهرة، والحمد لله':(final&&R.reached>=W.length?' · وصلت إلى آخر المقطع، لكن راجع الكلمات الملوّنة':'')}</div><div class="muted">الألوان: <span style="color:#1f8f5a">أخضر صحيحة</span> · <span style="color:#c98a00">أصفر قريبة وقد تكون سوء سمع</span> · <span style="color:#d23c3c">أحمر مختلفة</span> · <span style="color:#d27a1c">برتقالي ناقصة</span>. هذه مقارنة كلمات فقط، لا حكم على التجويد.</div>`};
+  $('#tres').innerHTML=`<div class="card" style="margin-top:10px;line-height:2.8;font-size:1.3rem;font-family:'Amiri Quran',Amiri,serif;text-align:justify;text-align-last:right" dir="rtl">${h||'<span class="muted">ابدأ القراءة...</span>'}</div>${ex}<div class="muted">وصلت إلى الكلمة ${AR(R.reached)} من ${AR(W.length)} · صحيحة ${AR(cnt.ok)} · قريبة ${AR(cnt.close)} · خاطئة ${AR(cnt.bad)} · ناقصة ${AR(cnt.miss)}${final&&done?' · أتممت المقطع كاملًا بلا أخطاء ظاهرة، والحمد لله':(final&&R.reached>=W.length?' · وصلت إلى آخر المقطع، لكن راجع الكلمات الملوّنة':'')}</div><div class="muted">الألوان: <span style="color:#1f8f5a">أخضر صحيحة</span> · <span style="color:#c98a00">أصفر قريبة وقد تكون سوء سمع</span> · <span style="color:#d23c3c">أحمر مختلفة</span> · <span style="color:#d27a1c">برتقالي ناقصة</span>. هذه مقارنة كلمات فقط، لا حكم على التجويد.</div>`};
  $('#tchk').onclick=()=>{const t=$('#ttx').value.trim();if(!t){API.toast('اكتب شيئًا أولًا');return}render(t,true)};
  let rec=null,fin='',itm='',on=false;
  const stop=()=>{on=false;try{rec&&rec.stop()}catch(e){}$('#tgo').disabled=!SR;$('#tstop').disabled=true};
