@@ -3,7 +3,7 @@ window.AmalExtra11=function(API){
 const {Pages,app,$,$$,LS,AR,esc,norm,loadScript,needQ,toast,copy,share,crumbs,route}=API;
 const css=`<style>
 .reccard{text-align:center}
-.reccard .mushaf{font-family:'Amiri Quran','Amiri',serif;font-size:1.9rem;line-height:2.6;text-align:center;background:#f6f1e6;color:#123228;border:2px solid var(--gold);border-radius:16px;padding:18px;margin:10px 0}
+.reccard .mushaf{font-family:'Amiri Quran','Amiri',serif;font-size:1.9rem;line-height:2.6;text-align:center;background:#f6f1e6;color:#141c46;border:2px solid var(--gold);border-radius:16px;padding:18px;margin:10px 0}
 .recbtn{border-radius:50%;width:74px;height:74px;font-size:1.7rem;border:0;cursor:pointer;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#122b20;box-shadow:0 4px 18px rgba(0,0,0,.4)}
 .recbtn.on{background:linear-gradient(135deg,#c0392b,#e74c3c);color:#fff;animation:recpulse 1.2s infinite}
 @keyframes recpulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.5)}50%{box-shadow:0 0 0 14px rgba(231,76,60,0)}}

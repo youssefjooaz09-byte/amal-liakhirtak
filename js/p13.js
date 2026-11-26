@@ -6,7 +6,7 @@ const OFFICIAL='https://misrquran.gov.eg/home',MASPERO='https://www.maspero.eg/s
 const NAME='إذاعة القرآن الكريم من القاهرة';
 const css=`<style>
 .rd{max-width:720px;margin:0 auto}
-.rd .hero{position:relative;overflow:hidden;border:1px solid var(--gold);border-radius:28px;padding:26px 18px 22px;text-align:center;background:radial-gradient(120% 90% at 50% 0%,rgba(47,133,102,.55),rgba(12,35,28,.92) 70%);box-shadow:var(--shadow)}
+.rd .hero{position:relative;overflow:hidden;border:1px solid var(--gold);border-radius:28px;padding:26px 18px 22px;text-align:center;background:radial-gradient(120% 90% at 50% 0%,rgba(122,69,196,.55),rgba(11,18,48,.92) 70%);box-shadow:var(--shadow)}
 .rd .hero:before{content:"";position:absolute;inset:0;opacity:.14;background:repeating-conic-gradient(from 0deg at 50% 38%,rgba(226,199,121,.9) 0 6deg,transparent 6deg 30deg);-webkit-mask:radial-gradient(circle at 50% 38%,#000 0,transparent 62%);mask:radial-gradient(circle at 50% 38%,#000 0,transparent 62%);pointer-events:none}
 .rd .hero>*{position:relative}
 .rd .tag{display:inline-flex;align-items:center;gap:8px;font-size:.85rem;color:#f6f1e6;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:3px 14px}
@@ -18,7 +18,7 @@ const css=`<style>
 .rd .ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(226,199,121,.45)}
 .rd.on .ring{animation:rdr 2.4s ease-out infinite}.rd.on .ring.r2{animation-delay:1.2s}
 @keyframes rdr{0%{transform:scale(.62);opacity:.9}100%{transform:scale(1.12);opacity:0}}
-.rd .big{position:absolute;inset:26px;border-radius:50%;border:2px solid var(--gold);background:linear-gradient(160deg,#4aa383,#3c1c6e);color:#fff;font-size:2.4rem;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 28px rgba(0,0,0,.45),inset 0 0 18px rgba(255,255,255,.12);transition:transform .15s}
+.rd .big{position:absolute;inset:26px;border-radius:50%;border:2px solid var(--gold);background:linear-gradient(160deg,#8a55d6,#3c1c6e);color:#fff;font-size:2.4rem;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 28px rgba(0,0,0,.45),inset 0 0 18px rgba(255,255,255,.12);transition:transform .15s}
 .rd .big:hover{transform:scale(1.05)}.rd .big:active{transform:scale(.97)}
 .rd .eq{display:flex;gap:4px;align-items:flex-end;justify-content:center;height:34px;margin:2px 0 4px}
 .rd .eq i{width:5px;height:6px;border-radius:3px;background:linear-gradient(#f2dc9a,#c9a54b);transition:height .3s}
