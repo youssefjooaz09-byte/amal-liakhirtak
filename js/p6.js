@@ -5,9 +5,9 @@ const ICW='<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" a
 const ICF='<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8.2h2.8l.5-3.3h-3.3V8.4c0-.9.4-1.7 1.8-1.7h1.6V3.8s-1.4-.3-2.8-.3c-2.8 0-4.5 1.7-4.5 4.7v2.3H6.8v3.3h2.8V22z"/></svg>';
 const contactIcons=`<div class="contact-ic"><a href="${WA}" target="_blank" rel="noopener" title="تواصل عبر واتساب" aria-label="تواصل عبر واتساب">${ICW}</a><a href="${FB}" target="_blank" rel="noopener" title="صفحتنا على فيسبوك" aria-label="صفحتنا على فيسبوك">${ICF}</a></div>`;
 /* footer contact + report link */
-const ft=$('#foot');if(ft&&!$('#ftc')){ft.insertAdjacentHTML('afterbegin',`<div id="ftc" style="margin-bottom:10px"><div class="muted">تواصل معنا</div>${contactIcons}<a class="muted" href="report.html">إبلاغ عن خطأ</a></div>`)}
+const ft=$('#foot');if(ft&&!$('#ftc')){ft.insertAdjacentHTML('afterbegin',`<div id="ftc" style="margin-bottom:10px"><a class="muted" href="report.html">إبلاغ عن خطأ</a></div>`)}
 /* ---------- contact ---------- */
-Pages.contact=async()=>{app.innerHTML=crumbs([['تواصل']])+`<h2 class="sec">تواصل معنا</h2><div class="card" style="text-align:center"><p>للاقتراحات أو الملاحظات أو التبليغ عن خطأ:</p>${contactIcons}<div class="toolbar" style="justify-content:center"><a class="btn gold" href="${WA}" target="_blank" rel="noopener">محادثة واتساب</a><a class="btn" href="${FB}" target="_blank" rel="noopener">فيسبوك</a><a class="btn" href="report.html">إبلاغ عن خطأ</a></div></div>`};
+Pages.contact=async()=>{app.innerHTML=crumbs([['تواصل مع المطور']])+`<h2 class="sec">تواصل مع المطور</h2><div class="card" style="text-align:center"><p>للاقتراحات أو الملاحظات أو التبليغ عن خطأ:</p>${contactIcons}<div class="toolbar" style="justify-content:center"><a class="btn gold" href="${WA}" target="_blank" rel="noopener">محادثة واتساب</a><a class="btn" href="${FB}" target="_blank" rel="noopener">فيسبوك</a><a class="btn" href="report.html">إبلاغ عن خطأ</a></div></div>`};
 /* ---------- report an error ---------- */
 Pages.report=async(p)=>{const Q=await needQ();const t=p.get('t')||'ayah';let ref='';
  if(t==='ayah'&&p.get('s')&&Q[p.get('s')-1])ref=`سورة ${Q[p.get('s')-1].name} - آية ${p.get('a')||''}`;
