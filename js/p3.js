@@ -183,4 +183,6 @@ if(window.AmalExtra15)window.AmalExtra15(API);
 if(window.AmalExtra16)window.AmalExtra16(API);
 if(window.AmalExtra18)window.AmalExtra18(API);
 if(window.AmalExtra20)window.AmalExtra20(API);
+if(window.AmalExtra21)window.AmalExtra21(API);
+if(window.AmalExtra22)window.AmalExtra22(API);
 };
