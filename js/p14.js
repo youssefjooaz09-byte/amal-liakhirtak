@@ -8,7 +8,8 @@ const CATS=[
  {id:'audio',t:'الصوتيات والإنشاد',ic:'headset',d:'إذاعة وتلاوات وتسجيلات'},
  {id:'act',t:'الأنشطة الدينية',ic:'quiz',d:'أسئلة وبطاقات وحفظ'},
  {id:'library',t:'المكتبة الإسلامية',ic:'lib',d:'كتب وقصص ومعارف وأدوات'},
- {id:'worship',t:'العبادات والأذكار',ic:'beads',d:'أذكار وأدعية ومواقيت'}
+ {id:'worship',t:'العبادات والأذكار',ic:'beads',d:'أذكار وأدعية ومواقيت'},
+ {id:'more',t:'أدوات وإعدادات',ic:'spark',d:'أدوات إضافية وإعدادات وتواصل'}
 ];
 /* [href, label, category, icon, optional extra categories] - every page of the site appears exactly once as primary */
 const ITEMS=[
@@ -17,8 +18,8 @@ const ITEMS=[
  ['majalis.html','مجالس العلم','circles','lib'],['videos.html','دروس مرئية','circles','lib'],['sheikhs.html','دروس الشيوخ','circles','headset'],['scholars.html','سير العلماء','circles','scroll'],
  ['radio.html','إذاعة القرآن الكريم','audio','mosque'],['oldschool.html','مدرسة التلاوة المصرية القديمة','audio','headset'],
  ['quiz.html','الأسئلة الدينية','act','quiz'],['cards.html','بطاقات يومية','act','spark'],['journal.html','مفكرتي','act','scroll'],['favorites.html','المفضلة','act','star'],
- ['library.html','الكتب الإسلامية','library','lib'],['qisas.html','قصص الأنبياء','library','scroll'],['prophets.html','الأنبياء','library','star'],['stories.html','قصص وعبر','library','book'],['hekayat.html','حكايات وعبر','library','book'],['glossary.html','قاموس المصطلحات','library','book'],['names-of-allah.html','أسماء الله الحسنى','library','spark'],['kids.html','ركن الأطفال','library','star'],['newmuslim.html','المسلم الجديد','library','star'],['images.html','معرض الصور','library','image'],['wallpapers.html','مركز الخلفيات','library','image'],['videomaker.html','صانع الفيديو','library','image'],['shelf.html','رفّ كتبي','library','lib'],['sources.html','المصادر','library','lib'],['settings.html','الإعدادات','library','spark'],['contact.html','تواصل','library','spark'],['report.html','إبلاغ عن خطأ','library','spark'],
- ['azkar.html','الأذكار','worship','beads'],['duas.html','الأدعية','worship','hands'],['wird.html','ورد يومي','worship','beads'],['salah.html','مواقيت الصلاة','worship','clock'],['qibla.html','اتجاه القبلة','worship','compass'],['hijri.html','التقويم الهجري','worship','clock'],['remind.html','التذكير بالصلاة','worship','clock']
+ ['library.html','الكتب الإسلامية','library','lib'],['storyhub.html','القصص والحكايات','library','scroll'],['prophets.html','الأنبياء','library','star'],['glossary.html','قاموس المصطلحات','library','book'],['names-of-allah.html','أسماء الله الحسنى','library','spark'],['kids.html','ركن الأطفال','library','star'],['newmuslim.html','المسلم الجديد','library','star'],['images.html','معرض الصور','more','image'],['wallpapers.html','مركز الخلفيات','more','image'],['videomaker.html','صانع الفيديو','more','image'],['shelf.html','رفّ كتبي','more','lib'],['sources.html','المصادر','more','lib'],['settings.html','الإعدادات','more','spark'],['contact.html','تواصل','more','spark'],['report.html','إبلاغ عن خطأ','more','spark'],
+ ['azkar.html','الأذكار','worship','beads'],['duas.html','الأدعية','worship','hands'],['wird.html','ورد يومي','worship','beads'],['salah.html','مواقيت الصلاة','worship','clock'],['qibla.html','اتجاه القبلة','worship','compass'],['hijri.html','التقويم الهجري','worship','clock'],['remind.html','التذكير بالصلاة','more','clock']
 ];
 /* new sections register here in later phases: window.AmalSections.push([href,label,cat,icon]) */
 window.AmalSections=window.AmalSections||[];
@@ -53,6 +54,7 @@ const css=`<style>
 </style>`;
 const catHtml=(c,open)=>{const it=inCat(c.id);return `<details ${open?'open':''} data-c="${c.id}"><summary><span class="cs-h">${icon(c.ic)}</span><span class="cs-t"><b>${c.t}</b><small>${c.d}</small></span><span class="cs-n">${API.AR(it.length)}</span><span class="cs-c">‹</span></summary><div class="cs-b">${it.map(link).join('')}</div></details>`};
 window.AmalCats={
+ find(q){const n=(API.norm||(x=>x))(q);return all().filter(i=>(API.norm||(x=>x))(i[1]).includes(n)).slice(0,6)},
  home(){const f=fav();const chips=f.length?`<div class="cs-chips">${f.map(h=>{const i=all().find(x=>x[0]===h);return i?`<a href="${i[0]}">★ ${esc(i[1])}</a>`:''}).join('')}</div>`:'';
   return css+`<div class="cs-all"><a class="btn gold" href="allsections.html">جميع الأقسام والبحث</a></div>${chips}<div class="cs" id="sections">${CATS.map(c=>catHtml(c,false)).join('')}</div>`},
  bind(){}

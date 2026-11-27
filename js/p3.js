@@ -181,4 +181,5 @@ if(window.AmalExtra13)window.AmalExtra13(API);
 if(window.AmalExtra14)window.AmalExtra14(API);
 if(window.AmalExtra15)window.AmalExtra15(API);
 if(window.AmalExtra16)window.AmalExtra16(API);
+if(window.AmalExtra18)window.AmalExtra18(API);
 };
