@@ -169,6 +169,69 @@ ${c('vfc','#e2c779','لون الإطار')}${r('vfw',1,12,3,'سُمك الإطا
 <div class="toolbar" id="vpre"></div>
 <div class="toolbar"><button class="btn sm" id="vsave" type="button">حفظ إعداداتي</button><button class="btn sm" id="vload" type="button">استرجاع إعداداتي</button><button class="btn sm" id="vreset" type="button">إعادة ضبط الكل</button></div><div class="muted" id="vsmsg"></div></div></details>`};
 
+const mp4RemuxBytes=u8=>{
+const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength),L=u8.length;
+const u32=o=>dv.getUint32(o),u64=o=>dv.getUint32(o)*4294967296+dv.getUint32(o+4),tp=o=>String.fromCharCode(u8[o],u8[o+1],u8[o+2],u8[o+3]);
+const kids=(s,e)=>{const r=[];let o=s;while(o+8<=e){let sz=u32(o);const t=tp(o+4);let h=8;if(sz===1){sz=u64(o+8);h=16}else if(sz===0)sz=e-o;if(sz<h||o+sz>e)break;r.push({t,s:o,h,e:o+sz});o+=sz}return r};
+const find=(b,t)=>kids(b.s+b.h,b.e).find(k=>k.t===t),all=(b,t)=>kids(b.s+b.h,b.e).filter(k=>k.t===t);
+const top=kids(0,L),moov=top.find(b=>b.t==='moov');if(!moov)throw new Error('no moov');
+const moofs=top.filter(b=>b.t==='moof');if(!moofs.length)throw new Error('not fragmented');
+const trex={};const mvex=find(moov,'mvex');if(mvex)all(mvex,'trex').forEach(b=>{const o=b.s+b.h;trex[u32(o+4)]={di:u32(o+8),dd:u32(o+12),ds:u32(o+16),df:u32(o+20)}});
+const tr={};
+all(moov,'trak').forEach(t=>{const tkhd=find(t,'tkhd'),id=u32(tkhd.s+tkhd.h+(u8[tkhd.s+tkhd.h]===1?20:12)),mdia=find(t,'mdia'),mdhd=find(mdia,'mdhd'),mv=u8[mdhd.s+mdhd.h]===1?1:0;tr[id]={box:t,id,ts:u32(mdhd.s+mdhd.h+(mv?20:12)),samples:[],hasCts:false};});
+for(const mf of moofs){let prevEnd=-1;for(const tf of all(mf,'traf')){const th=find(tf,'tfhd'),o=th.s+th.h,fl=u32(o)&0xffffff,id=u32(o+4);let p=o+8,base=mf.s;const T=tr[id];if(!T)continue;const d=trex[id]||{di:1,dd:0,ds:0,df:0};let dd=d.dd,ds=d.ds,df=d.df;
+if(fl&1){base=u64(p);p+=8}else if(!(fl&0x20000)&&prevEnd>=0)base=prevEnd;
+if(fl&2)p+=4;if(fl&8){dd=u32(p);p+=4}if(fl&0x10){ds=u32(p);p+=4}if(fl&0x20){df=u32(p);p+=4}
+let cur=base;
+for(const tn of all(tf,'trun')){const q=tn.s+tn.h,ver=u8[q],f=u32(q)&0xffffff,n=u32(q+4);let r=q+8,off=cur;if(f&1){off=base+dv.getInt32(r);r+=4}let ff=null;if(f&4){ff=u32(r);r+=4}
+for(let i=0;i<n;i++){let du=dd,sz=ds,fg=df,cts=0;if(f&0x100){du=u32(r);r+=4}if(f&0x200){sz=u32(r);r+=4}if(f&0x400){fg=u32(r);r+=4}else if(i===0&&ff!==null)fg=ff;if(f&0x800){cts=ver?dv.getInt32(r):u32(r);r+=4;if(cts)T.hasCts=true}
+T.samples.push({o:off,z:sz,d:du,sync:!(fg&0x10000),c:cts});off+=sz}
+cur=off}
+prevEnd=cur}}
+const w32=(a,v)=>a.push((v>>>24)&255,(v>>>16)&255,(v>>>8)&255,v&255);
+const mk=(t,...parts)=>{let n=8;parts.forEach(p=>n+=p.length);const a=[];w32(a,n);for(const c of t)a.push(c.charCodeAt(0));const out=new Uint8Array(n);out.set(a);let o=8;parts.forEach(p=>{out.set(p,o);o+=p.length});return out};
+const U=a=>Uint8Array.from(a);const full=(v,f,...x)=>{const a=[v,(f>>16)&255,(f>>8)&255,f&255];x.forEach(n=>w32(a,n>>>0));return U(a)};
+const build=(base)=>{
+let mvDur=0;const mvTs=u32(find(moov,'mvhd').s+find(moov,'mvhd').h+(u8[find(moov,'mvhd').s+find(moov,'mvhd').h]===1?20:12));
+const traks=[];let pos=base;const chunks=[];
+for(const id in tr){const T=tr[id];if(!T.samples.length)continue;const S=T.samples;let dur=0;S.forEach(s=>dur+=s.d);mvDur=Math.max(mvDur,Math.round(dur*mvTs/T.ts));
+const stts=[];let ls=-1,cn=0;S.forEach(s=>{if(s.d===ls)cn++;else{if(cn)stts.push([cn,ls]);ls=s.d;cn=1}});stts.push([cn,ls]);
+const sttsB=[];w32(sttsB,stts.length);stts.forEach(e=>{w32(sttsB,e[0]);w32(sttsB,e[1])});
+const szB=[];w32(szB,0);w32(szB,S.length);S.forEach(s=>w32(szB,s.z));
+const scB=[];w32(scB,1);w32(scB,1);w32(scB,1);w32(scB,1);
+const myStart=pos;const offs=S.map(s=>{const p=pos;pos+=s.z;return p});
+const coB=[];w32(coB,S.length);offs.forEach(p=>w32(coB,p));
+chunks.push({T,S,start:myStart});
+const mdia=find(T.box,'mdia'),minf=find(mdia,'minf'),stbl=find(minf,'stbl'),stsd=find(stbl,'stsd');
+const sttsBox=mk('stts',U([0,0,0,0]),U(sttsB));
+const sync=S.map((s,i)=>s.sync?i+1:0).filter(Boolean);
+const list=[u8.slice(stsd.s,stsd.e),sttsBox];
+if(T.hasCts){const cb=[];const cs=[];let lc=null,c2=0;S.forEach(s=>{if(s.c===lc)c2++;else{if(c2)cs.push([c2,lc]);lc=s.c;c2=1}});cs.push([c2,lc]);w32(cb,cs.length);cs.forEach(e=>{w32(cb,e[0]);w32(cb,e[1]>>>0)});list.push(mk('ctts',U([1,0,0,0]),U(cb)))}
+if(sync.length&&sync.length<S.length){const sb=[];w32(sb,sync.length);sync.forEach(n=>w32(sb,n));list.push(mk('stss',U([0,0,0,0]),U(sb)))}
+list.push(mk('stsc',U([0,0,0,0]),U(scB)),mk('stsz',U([0,0,0,0]),U(szB.slice(0))),mk('stco',U([0,0,0,0]),U(coB)));
+const newStbl=mk('stbl',...list);
+const mkids=kids(minf.s+minf.h,minf.e).filter(k=>k.t!=='stbl').map(k=>u8.slice(k.s,k.e));
+const newMinf=mk('minf',...mkids,newStbl);
+const md=find(mdia,'mdhd');const mdb=u8.slice(md.s,md.e);const mdv=mdb[8]===1;const mdv2=new DataView(mdb.buffer);
+if(mdv){mdv2.setUint32(8+4+8+8+4,Math.floor(dur/4294967296));mdv2.setUint32(8+4+8+8+8,dur>>>0)}else mdv2.setUint32(8+4+4+4+4,dur>>>0);
+const mdKids=kids(mdia.s+mdia.h,mdia.e).map(k=>k.t==='mdhd'?mdb:k.t==='minf'?newMinf:u8.slice(k.s,k.e));
+const newMdia=mk('mdia',...mdKids);
+const tk=find(T.box,'tkhd');const tb=u8.slice(tk.s,tk.e);const tv=new DataView(tb.buffer);const tdur=Math.round(dur*mvTs/T.ts);
+if(tb[8]===1){tv.setUint32(8+4+8+8+4+4,Math.floor(tdur/4294967296));tv.setUint32(8+4+8+8+4+8,tdur>>>0)}else tv.setUint32(8+4+4+4+4+4,tdur>>>0);
+const tKids=kids(T.box.s+T.box.h,T.box.e).filter(k=>k.t!=='edts').map(k=>k.t==='tkhd'?tb:k.t==='mdia'?newMdia:u8.slice(k.s,k.e));
+traks.push(mk('trak',...tKids))}
+const mh=find(moov,'mvhd'),hb=u8.slice(mh.s,mh.e),hv=new DataView(hb.buffer);
+if(hb[8]===1){hv.setUint32(8+4+8+8+4,Math.floor(mvDur/4294967296));hv.setUint32(8+4+8+8+8,mvDur>>>0)}else hv.setUint32(8+4+4+4+4,mvDur>>>0);
+const mKids=kids(moov.s+moov.h,moov.e).filter(k=>k.t!=='mvex'&&k.t!=='trak');
+const mo=mk('moov',...mKids.map(k=>k.t==='mvhd'?hb:u8.slice(k.s,k.e)),...traks);
+return {mo,chunks,end:pos}};
+const ft=top.find(b=>b.t==='ftyp');const ftyp=mk('ftyp',new TextEncoder().encode('isom'),U([0,0,2,0]),new TextEncoder().encode('isomiso2mp41'));
+const t0=build(0);const base=ftyp.length+t0.mo.length+8;const r=build(base);
+if(r.mo.length!==t0.mo.length)throw new Error('size mismatch');
+const mdatSize=r.end-base,out=new Uint8Array(base+mdatSize);out.set(ftyp,0);out.set(r.mo,ftyp.length);
+const hd=[];w32(hd,mdatSize+8);out.set(hd,ftyp.length+r.mo.length);out.set([109,100,97,116],ftyp.length+r.mo.length+4);
+for(const c of r.chunks){let p=c.start;for(const s of c.S){out.set(u8.subarray(s.o,s.o+s.z),p);p+=s.z}}
+return out};
 Pages.videomaker=async()=>{const Q=await needQ();const NAT=await loadScript('data/nature.js','NATURE').catch(()=>[]);const RCL=await loadScript('data/reciters.js','RECITERS').catch(()=>[]);const RMAP={"yasser-dosari": 92, "abdullah-juhani": 62, "bandar-baleela": 217, "muhammad-minshawi": 112, "abdulbasit-abdulsamad": 53, "mahmoud-husary": 118, "mishary-alafasy": 123, "mahmoud-banna-mujawwad": 122, "mustafa-ismail-mujawwad": 288, "ahmad-naina": 9, "hani-rifai": 89, "salah-bukhatir": 46, "idris-abkar": 12, "nasser-qatami": 86, "abdulrahman-oosi": 225, "khalid-jalil": 20, "maher-muaiqly-mujawwad": 133, "mahmoud-husary-mujawwad": 119, "abdulbasit-abdulsamad-mujawwad": 51, "ahmad-humaid": 137, "m-mahmoud-husary-r3": 120, "m-muhammad-ayyub-r1": 109, "m-muhammad-shareef-r1": 198, "m-abdulrahman-sudais-r1": 54, "m-saud-shuraim-r1": 31, "m-abdulbari-thubaiti-r1": 49, "m-ali-hudhaifi-r1": 74, "m-abdullah-buaijan-r1": 58, "m-saad-ghamdi-r1": 30, "m-ahmad-ajmi-r1": 5, "m-abdullah-khayyat-r1": 61, "m-omar-kazabri-r1": 80};const MQR=(RCL.list||RCL).filter(r=>RMAP[r.key]);let bg=null,bgKind='',bgUrl='',busy=false,bgCredit='',logo=null;loadImg('img/icon-512.png').then(i=>{logo=i}).catch(()=>{});
  app.innerHTML=crumbs([['صانع فيديو القرآن']])+`<h2 class="sec">صانع فيديو القرآن</h2><style>.vsec{border:1px solid var(--gold);border-radius:10px;margin:8px 0;padding:0 10px;background:rgba(255,255,255,.03)}.vsec>summary{cursor:pointer;font-weight:bold;padding:10px 0;color:var(--gold)}.vsec[open]>summary{border-bottom:1px solid rgba(226,199,121,.3);margin-bottom:6px}.vbody{padding-bottom:10px}.vsub{margin:8px 0}.vsub>summary{cursor:pointer;padding:6px 0}.vbody label{display:block;margin-top:8px}</style><details class="vsec"><summary>تعليمات وحدود (اضغط للقراءة)</summary><div class="vbody notice">ارفع خلفية من جهازك (صورة أو فيديو طبيعة تملك حق استخدامه)، اختر السورة والآيات والخط، ثم اضغط «إنشاء». يتم كل شيء داخل متصفحك ولا يُرفع ملفك لأي خادم. حدود صريحة: <b>١)</b> التسجيل يجري بزمن حقيقي، أي أن فيديو مدته دقيقة يستغرق دقيقة، ويجب إبقاء هذه الصفحة مفتوحة وظاهرة. <b>٢)</b> صيغة الملف تحددها المتصفح (WebM في الغالب، وMP4 إن دعمه). <b>٣)</b> التلاوة الصوتية من everyayah.com أو mp3quran.net وتحتاج إنترنت، وإن تعذر جلبها يُصنع الفيديو صامتًا ويُخبرك الموقع بذلك. <b>٤)</b> متصفحات الآيفون القديمة لا تدعم التسجيل. النص من مصحف المدينة (حفص).</div></details>
  <div class="dash" style="grid-template-columns:minmax(0,1fr) 380px"><div style="text-align:center"><canvas id="vc" width="540" height="960" style="max-width:100%;max-height:48vh;border:1px solid var(--gold);border-radius:12px;background:#0b1230"></canvas><div id="vs" class="muted"></div><progress id="vp" value="0" max="100" style="width:80%;display:none"></progress><div id="vo"></div></div>
@@ -261,6 +324,7 @@ Pages.videomaker=async()=>{const Q=await needQ();const NAT=await loadScript('dat
   mr.stop();await done;stream.getTracks().forEach(t=>t.stop());
   type=(mr.mimeType||mime||'video/webm').split(';')[0];blob=new Blob(chunks,{type});
   vok=await new Promise(res=>{if(blob.size<2000)return res(false);const v=document.createElement('video');v.muted=true;v.preload='metadata';const to=setTimeout(()=>res(false),8000);v.onloadedmetadata=()=>{clearTimeout(to);res(v.videoWidth>0&&v.videoHeight>0)};v.onerror=()=>{clearTimeout(to);res(false)};v.src=URL.createObjectURL(blob)});
+  if(vok&&type.includes('mp4')){try{const fx=new Blob([mp4RemuxBytes(new Uint8Array(await blob.arrayBuffer()))],{type:'video/mp4'});const ok2=await new Promise(res=>{const v=document.createElement('video');v.muted=true;v.preload='metadata';const to=setTimeout(()=>res(false),8000);v.onloadedmetadata=()=>{clearTimeout(to);res(v.videoWidth>0&&isFinite(v.duration)&&v.duration>total*.5)};v.onerror=()=>{clearTimeout(to);res(false)};v.src=URL.createObjectURL(fx)});if(ok2)blob=fx}catch(e){}}
   if(vok)break;note+='المحاولة '+AR(attempt)+' لم تُنتج فيديو صالحًا، جرّبنا صيغة أخرى. '}
   if(wl)try{wl.release()}catch(e){}
   if(ac)try{ac.close()}catch(e){}if(bgKind==='v')bg.pause();
