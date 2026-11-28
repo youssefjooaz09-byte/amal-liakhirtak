@@ -18,9 +18,8 @@ const page=(location.pathname.split('/').pop()||'index.html');
 const it=(href,ic,t,on)=>`<a href="${href}" class="${on?'on':''}">${ic}<span>${t}</span></a>`;
 const b=document.createElement('nav');b.id='bnav';b.setAttribute('aria-label','التنقل السريع');
 b.innerHTML=it('index.html',icon('mosque'),'الرئيسية',page==='index.html')+it('quran.html',icon('book'),'القرآن',/^(quran|surah)\.html/.test(page))+it('azkar.html',icon('beads'),'الأذكار',page==='azkar.html')
- +`<button type="button" id="bsearch"><span class="e">🔍</span><span>بحث</span></button>`+it('allsections.html',icon('lib'),'المزيد',page==='allsections.html');
+ +it('reciters.html','<span class="e">🎧</span>','التلاوات',page==='reciters.html')+it('allsections.html',icon('lib'),'المزيد',page==='allsections.html');
 document.body.appendChild(b);
-$('#bsearch').onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});const q=$('#q');if(q)setTimeout(()=>q.focus(),250)};
 const q=$('#q'),box=$('#sres');
 if(q){q.placeholder='🔍 ابحث عن قسم أو سورة أو آية…';
  new MutationObserver(()=>{const v=q.value.trim();if(v.length<2||!window.AmalCats||box.querySelector('.sec-hit'))return;
